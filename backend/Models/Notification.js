@@ -1,0 +1,31 @@
+import mongoose from "mongoose";
+const s = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index: true
+    },
+    type: {
+        type: String,
+        required: true
+    },
+    title: String,
+    message: String,
+    relatedId: mongoose.Schema.Types.ObjectId,
+    relatedType: String,
+    isRead: {
+        type: Boolean,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+s.index({
+    user: 1,
+    isRead: 1,
+    createdAt: -1
+});
+export default mongoose.model('Notification', s);

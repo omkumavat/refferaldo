@@ -1,0 +1,38 @@
+import mongoose from "mongoose";
+const s = new mongoose.Schema({
+    candidate: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    job: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Job',
+        required: true
+    },
+    score: {
+        type: Number,
+        min: 0,
+        max: 100
+    },
+    matchedSkills: [String],
+    missingSkills: [String],
+    explanation: String,
+    generatedAt: {
+        type: Date,
+        default: Date.now
+    }
+}, {
+    timestamps: true
+});
+s.index({
+    candidate: 1,
+    job: 1
+}, {
+    unique: true
+});
+s.index({
+    candidate: 1,
+    score: -1
+});
+export default mongoose.model('Match', s);

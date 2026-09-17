@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    margin: 0;
+    font-family:
+        "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #fafafa;
+    color: #0f172a;
+    font-feature-settings:
+        "cv11" on,
+        "ss01" on;
+}
+
+code,
+pre {
+    font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+        Consolas, monospace;
+}
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222 47% 11%;
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 160 84% 30%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222 47% 11%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215 20% 45%;
+        --accent: 152 76% 96%;
+        --accent-foreground: 160 84% 22%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 160 84% 30%;
+        --chart-1: 160 84% 30%;
+        --chart-2: 174 77% 36%;
+        --chart-3: 239 70% 60%;
+        --chart-4: 32 95% 44%;
+        --chart-5: 199 89% 48%;
+        --radius: 0.625rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    ::selection {
+        background: #a7f3d0;
+        color: #064e3b;
+    }
+    h1,
+    h2,
+    h3,
+    h4 {
+        letter-spacing: -0.02em;
+    }
+}
+
+/* Custom subtle utilities */
+@layer utilities {
+    .shadow-xs {
+        box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+    }
+    .divide-hair > * + * {
+        border-top: 1px solid #f1f5f9;
+    }
+    .grid-pattern {
+        background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+        background-size: 22px 22px;
+    }
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:opacity-50;
+    }
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-xs;
+    }
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors;
+    }
+    .field {
+        @apply w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-colors;
+    }
+    .chip {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200;
+    }
+    .chip-emerald {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200;
+    }
+    .card {
+        @apply bg-white border border-slate-200 rounded-xl;
+    }
+    .eyebrow {
+        @apply text-xs font-semibold uppercase tracking-widest text-emerald-700;
+    }
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}

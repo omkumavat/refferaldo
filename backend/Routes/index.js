@@ -1,0 +1,13 @@
+import express from 'express';
+const router = express.Router();
+
+router.use('/auth', require('./authRoutes'));
+router.use('/users', require('./userRoutes'));
+router.use('/companies', require('./companyRoutes'));
+router.use('/jobs', require('./jobRoutes'));
+router.use('/candidates', require('./candidateRoutes'));
+router.use('/employees', require('./employeeRoutes'));
+router.use('/company', require('./companyReferralRoutes'));
+router.use('/notifications', require('./notificationRoutes'));
+router.use('/admin', require('./adminRoutes'));
+export default router;

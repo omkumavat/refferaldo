@@ -1,0 +1,39 @@
+import mongoose from "mongoose";
+const s = new mongoose.Schema({
+    candidate: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    job: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Job',
+        required: true
+    },
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true
+    },
+    employee: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    message: String,
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'rejected', 'expired'],
+        default: 'pending'
+    }
+}, {
+    timestamps: true
+});
+s.index({
+    candidate: 1,
+    job: 1,
+    employee: 1
+}, {
+    unique: true
+});
+export default mongoose.model('ReferralRequest', s);
