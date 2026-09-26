@@ -7,25 +7,27 @@ import { MapPin, Briefcase, Mail, Phone, FileText, Github, Linkedin } from "luci
 
 export const CandidateProfile = () => {
   const me = candidates[0];
+  const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
   return (
-    <DashboardShell role="candidate" roleLabel="Candidate" sidebar={candidateSidebar}>
+    <DashboardShell role="candidate" userName={user.name} roleLabel="Candidate" sidebar={candidateSidebar}>
       <div className="card p-6">
         <div className="flex items-start gap-5 flex-col sm:flex-row">
-          <img src={me.photo} alt={me.name} className="w-24 h-24 rounded-full object-cover border border-slate-200" />
+          <img src={user?.photo} alt={user?.name} className="w-24 h-24 rounded-full object-cover border border-slate-200" />
           <div className="flex-1">
             <div className="flex items-center flex-wrap gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">{me.name}</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">{user.name}</h1>
               <VerificationBadge label="Identity Verified" />
             </div>
-            <p className="text-slate-600 mt-0.5">{me.headline}</p>
+            <p className="text-slate-600 mt-0.5">{user?.headline}</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3 text-sm text-slate-500">
-              <span className="inline-flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {me.location}</span>
-              <span className="inline-flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> {me.experience} experience</span>
+              <span className="inline-flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {user?.location}</span>
+              <span className="inline-flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> {user?.experience} experience</span>
             </div>
           </div>
           <div className="flex gap-2">
             <button className="btn-secondary text-xs">Preview</button>
-            <button className="btn-primary text-xs" data-testid="edit-profile-btn">Edit profile</button>
+            <button className="btn-primary text-xs" data-testid="edit-profile-btn" 
+              onClick={navi}>Edit profile</button>
           </div>
         </div>
       </div>

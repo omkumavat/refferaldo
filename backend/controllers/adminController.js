@@ -1,0 +1,74 @@
+const User = require('../models/User'),
+    Company = require('../models/Company'),
+    Job = require('../models/Job'),
+    Referral = require('../models/Referral'),
+    Employee = require('../models/Employee');
+const {
+    ok,
+    fail
+} = require('../utils/api');
+const {
+    getPagination,
+    meta
+} = require('../utils/pagination');
+async function list(Model, filter, req, populate) {
+    const {
+        page,
+        limit,
+        skip
+    } = getPagination(req);
+    let q = Model.find(filter).sort({
+        createdAt: -1
+    }).skip(skip).limit(limit);
+    if (populate) q = q.populate(populate);
+    const [data, total] = await Promise.all([q, Model.countDocuments(filter)]);
+    return resJson(data, page, limit, total);
+}
+
+function resJson(data, page, limit, total) {
+    return {
+        success: true,
+        data,
+        pagination: meta(page, limit, total)
+    }
+}
+exports.users = (req, res) => list(User, {}, req, '').then(x => res.json(x));
+exports.companies = (req, res) => list(Company, {}, req, 'createdBy').then(x => res.json(x));
+exports.jobs = (req, res) => list(Job, {}, req, [{
+    path: 'company',
+    select: 'name'
+}]).then(x => res.json(x));
+exports.referrals = (req, res) => list(Referral, {}, req, [{
+    path: 'candidate',
+    select: 'name email'
+}, {
+    path: 'employee',
+    select: 'name email'
+}, {
+    path: 'job',
+    select: 'title'
+}]).then(x => res.json(x));
+exports.verifyCompany = async (req, res) => {
+    const c = await Company.findById(req.params.id);
+    if (!c) return fail(res, 'Company not found', 404);
+    c.verificationStatus = req.body.status || 'verified';
+    c.verifiedAt = c.verificationStatus === 'verified' ? new Date() : undefined;
+    await c.save();
+    return ok(res, c, 'Company verification updated');
+};
+exports.verifyEmployee = async (req, res) => {
+    const e = await Employee.findById(req.params.id);
+    if (!e) return fail(res, 'Employee relationship not found', 404);
+    e.verificationStatus = req.body.status || 'verified';
+    e.verifiedAt = e.verificationStatus === 'verified' ? new Date() : undefined;
+    await e.save();
+    return ok(res, e, 'Employee verification updated');
+};
+exports.jobStatus = async (req, res) => {
+    const j = await Job.findById(req.params.id);
+    if (!j) return fail(res, 'Job not found', 404);
+    if (!['draft', 'active', 'paused', 'closed'].includes(req.body.status)) return fail(res, 'Invalid job status', 422);
+    j.status = req.body.status;
+    await j.save();
+    return ok(res, j, 'Job status updated');
+};

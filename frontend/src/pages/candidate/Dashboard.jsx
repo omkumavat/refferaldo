@@ -22,11 +22,12 @@ const sidebar = [
 ];
 
 export const candidateSidebar = sidebar;
+const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
 
 export const CandidateDashboard = () => (
-  <DashboardShell role="candidate" roleLabel="Candidate" userName="Rahul" sidebar={sidebar}>
+  <DashboardShell role="candidate" roleLabel="Candidate" userName={user.name} sidebar={sidebar}>
     <div className="mb-8">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Good morning, Rahul.</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Good morning, {user.name} </h1>
       <p className="text-slate-600 mt-1">Here's what's happening with your job search.</p>
     </div>
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

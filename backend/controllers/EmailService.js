@@ -91,7 +91,7 @@ export const sendVerificationEmail = async (email, token) => {
     let htmlContent = template({ verificationUrl });
 
     await transporter.sendMail({
-        from: `CodeVerse Admin <${process.env.MAIL_USER}`,
+        from: `Refferal.do Admin <${process.env.MAIL_USER}`,
         to: email,
         subject: 'Complete Your Registration',
         html: htmlContent

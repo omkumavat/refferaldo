@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { Sparkles, Bell, Search, Menu, X, ChevronDown } from "lucide-react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Sparkles, Bell, Search, Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 
-/**
- * Unified dashboard shell for all roles.
- * Props: role, title, sidebar (array of { to, label, icon })
- */
 export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahul", sidebar = [], children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
 
   const roleSwitch = [
     { label: "Candidate", to: "/candidate/dashboard", key: "candidate" },
@@ -16,6 +15,45 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
     { label: "Company", to: "/company/dashboard", key: "company" },
     { label: "Admin", to: "/admin/dashboard", key: "admin" },
   ];
+
+  const handleLogout = async () => {
+    try {
+      // Call backend logout API
+      await fetch(
+         `${import.meta.env.VITE_API_URL}/auth/logout`,
+        // `${API_URL}/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      // Clear any frontend auth data if you store it
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+
+      // Close dropdown
+      setShowUserMenu(false);
+
+      // Navigate to home
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+
+      // Optional: still clear frontend session
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      navigate("/");
+    }
+  };
+
+  const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
 
   return (
     <div className="min-h-screen bg-zinc-50 flex">
@@ -47,10 +85,9 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
                   end={item.end}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`
                   }
                   data-testid={`sidebar-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
@@ -69,11 +106,10 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
                 <Link
                   key={r.key}
                   to={r.to}
-                  className={`block px-3 py-1.5 rounded-md text-xs font-medium ${
-                    location.pathname.startsWith(`/${r.key}`)
-                      ? "bg-slate-100 text-slate-900"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                  }`}
+                  className={`block px-3 py-1.5 rounded-md text-xs font-medium ${location.pathname.startsWith(`/${r.key}`)
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                    }`}
                   data-testid={`role-switcher-${r.key}`}
                 >
                   {r.label} view
@@ -106,15 +142,61 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-500 rounded-full" />
             </button>
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xs font-semibold">
-                {userName.charAt(0)}
+            <div className="relative">
+              {/* User Button */}
+              <div
+                className="flex items-center gap-2 pl-2 border-l border-slate-200 hover:cursor-pointer"
+                data-testid="user-menu"
+                onClick={() => setShowUserMenu((prev) => !prev)}
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl font-semibold">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+
+                <div className="hidden md:block leading-tight">
+                  <p className="text-sm font-semibold text-slate-900">
+                    {userName}
+                  </p>
+
+                  <p className="text-[11px] text-slate-500 capitalize">
+                    {roleLabel || role}
+                  </p>
+                </div>
+
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 hidden md:block transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""
+                    }`}
+                />
               </div>
-              <div className="hidden md:block leading-tight">
-                <p className="text-sm font-semibold text-slate-900">{userName}</p>
-                <p className="text-[11px] text-slate-500 capitalize">{roleLabel || role}</p>
-              </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 hidden md:block" />
+
+              {/* Dropdown */}
+              {showUserMenu && (
+                <div className="absolute right-0 top-full mt-2 w-40 h-22 bg-white border border-slate-200 rounded-xl shadow-lg py-2 z-50">
+
+                  {/* Profile */}
+                  <Link
+                    to={`/${role}/profile`}
+                    onClick={() => setShowUserMenu(false)}
+                    className="flex items-center gap-3 px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    <User className="w-4 h-4 text-slate-500" />
+                    <span>Profile</span>
+                  </Link>
+
+                  {/* Divider */}
+                  <div className="my-1 border-t border-slate-100" />
+
+                  {/* Logout */}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>

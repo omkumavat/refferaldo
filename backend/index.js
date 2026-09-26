@@ -6,24 +6,28 @@ import cors from 'cors';
 import path from "path";
 import { fileURLToPath } from "url";
 import cloudinaryConnect from "./Database/cloudinary.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(bodyParser.json({ limit: '100mb' })); // Adjust the limit as needed
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 dotenv.config();
 connectDB();
 cloudinaryConnect();
-app.use(cors({
-  origin: '*',  
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowing these methods
-  allowedHeaders: ['Content-Type'], // Allow these headers
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your frontend URL
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.get('/', (req, res) => {
-  res.send('Hello World')
-})
+import authRoutes from "./Routes/authRoutes.js";
+app.use("/api/auth", authRoutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

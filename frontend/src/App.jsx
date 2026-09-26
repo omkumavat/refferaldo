@@ -12,6 +12,7 @@ import { HowItWorks } from "./pages/public/HowItWorks";
 import { Login } from "./pages/public/Login";
 import { Signup } from "./pages/public/Signup";
 import { ForgotPassword } from "./pages/public/ForgotPassword";
+import { EmailVerification } from "./pages/public/EmailVerification";
 
 // Candidate
 import { CandidateDashboard } from "./pages/candidate/Dashboard";
@@ -66,9 +67,16 @@ function App() {
         <Route path="/companies" element={<CompaniesList />} />
         <Route path="/companies/:id" element={<CompanyDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/login" element={<Login />} />
+        {
+          localStorage.getItem("user") || sessionStorage.getItem("user") ? (
+            <Route path="/login" element={<Navigate to="/" replace />} />
+          ) : (
+            <Route path="/login" element={<Login />} />
+          )
+        }
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify" element={<EmailVerification />} />
 
         {/* Candidate */}
         <Route path="/candidate" element={<Navigate to="/candidate/dashboard" replace />} />
