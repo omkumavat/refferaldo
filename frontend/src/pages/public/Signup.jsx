@@ -24,7 +24,7 @@ const roles = [
 const API_URL = import.meta.env.VITE_API_URL;
 
 const personalEmailProviders = [
-  "gmail.com",
+  // "gmail.com",
   "yahoo.com",
   "hotmail.com",
   "outlook.com",
@@ -45,6 +45,8 @@ export const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    companyName: "",
+    companyWebsite: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -85,6 +87,8 @@ export const Signup = () => {
 
     const firstName = formData.firstName.trim();
     const lastName = formData.lastName.trim();
+    const companyName = formData.firstName.trim();
+    const companyWebsite = formData.firstName.trim();
     const email = formData.email.trim().toLowerCase();
     const password = formData.password;
     const confirmPassword = formData.confirmPassword;
@@ -97,6 +101,24 @@ export const Signup = () => {
         "First name must be at least 2 characters";
     } else if (!/^[a-zA-Z\s'-]+$/.test(firstName)) {
       newErrors.firstName = "First name contains invalid characters";
+    }
+
+    if (!companyName) {
+      newErrors.companyName = "Company name is required";
+    } else if (companyName.length < 2) {
+      newErrors.companyName =
+        "Company name must be at least 2 characters";
+    } else if (!/^[a-zA-Z\s'-]+$/.test(companyName)) {
+      newErrors.companyName = "Company name contains invalid characters";
+    }
+
+    if (!companyWebsite) {
+      newErrors.companyWebsite = "Company website is required";
+    } else if (companyWebsite.length < 2) {
+      newErrors.companyWebsite =
+        "Company name must be at least 5 characters";
+    } else if (!/^[a-zA-Z\s'-]+$/.test(companyWebsite)) {
+      newErrors.companyWebsite = "Company website contains invalid characters";
     }
 
     // Last name
@@ -181,6 +203,8 @@ export const Signup = () => {
           name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
           email: formData.email.trim().toLowerCase(),
           password: formData.password,
+          companyname: formData.companyName,
+          companyweb: formData.companyWebsite,
           role,
         }),
       });
@@ -245,7 +269,7 @@ export const Signup = () => {
         </>
       }
     >
-      
+
       <p className="text-xs font-semibold text-slate-600 mb-2">
         I am a...
       </p>
@@ -336,6 +360,54 @@ export const Signup = () => {
             )}
           </div>
         </div>
+
+        {
+          role === "employee" && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <input
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  placeholder="Company Name"
+                  className={`field w-full ${errors.companyName
+                    ? "border-red-400"
+                    : ""
+                    }`}
+                  data-testid="signup-first-name"
+                  autoComplete="given-name"
+                />
+
+                {errors.companyName && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.companyName}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  name="companyWebsite"
+                  value={formData.companyWebsite}
+                  onChange={handleChange}
+                  placeholder="Company Website"
+                  className={`field w-full ${errors.companyWebsite
+                    ? "border-red-400"
+                    : ""
+                    }`}
+                  data-testid="signup-last-name"
+                  autoComplete="family-name"
+                />
+
+                {errors.companyWebsite && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.companyWebsite}
+                  </p>
+                )}
+              </div>
+            </div>
+          )
+        }
 
         {/* Email */}
         <div>

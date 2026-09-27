@@ -7,6 +7,7 @@ const s = new mongoose.Schema({
     },
     logo: String,
     website: String,
+    career_site: String,
     domain: String,
     description: String,
     industry: String,
@@ -17,12 +18,10 @@ const s = new mongoose.Schema({
         default: 'pending',
         index: true
     },
+    employeeAssociated: {
+        type: Number,
+    },
     verifiedAt: Date,
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
 }, {
     timestamps: true
 });

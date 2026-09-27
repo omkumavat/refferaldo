@@ -10,6 +10,9 @@ const s = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    avatar :{
+        type:String
+    },
     designation: String,
     department: String,
     employmentStatus: {

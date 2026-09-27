@@ -1,6 +1,6 @@
 
-import Employee from '../models/Employee';
-import Company from '../models/Company';
+import Employee from '../models/Employee.js';
+import Company from '../models/Company.js';
 export const requireCompanyAccess = async (req, res, next) => {
     try {
         const companyId = req.params.companyId || req.params.id;

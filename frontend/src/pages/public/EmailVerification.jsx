@@ -70,6 +70,7 @@ export const EmailVerification = () => {
                         state: {
                             message:
                                 "Email verified successfully. You can now log in.",
+                                showResumeParse:true
                         },
                     });
                 }, 2500);

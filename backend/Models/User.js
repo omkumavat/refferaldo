@@ -33,6 +33,10 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isPhoneVerified: {
+        type: Boolean,
+        default: false
+    },
     isActive: {
         type: Boolean,
         default: true
@@ -52,6 +56,10 @@ const schema = new mongoose.Schema({
     passwordResetExpires: {
         type: Date,
         select: false
+    },
+    candidateProfile: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CandidateProfile'
     }
 }, {
     timestamps: true

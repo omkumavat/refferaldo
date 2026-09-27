@@ -13,6 +13,7 @@ import { Login } from "./pages/public/Login";
 import { Signup } from "./pages/public/Signup";
 import { ForgotPassword } from "./pages/public/ForgotPassword";
 import { EmailVerification } from "./pages/public/EmailVerification";
+import ResumeOnboarding from './components/ResumeOnboarding'
 
 // Candidate
 import { CandidateDashboard } from "./pages/candidate/Dashboard";
@@ -34,6 +35,7 @@ import { EmployeeRewards } from "./pages/employee/Rewards";
 import { EmployeeVerify } from "./pages/employee/Verify";
 import { EmployeeNotifications } from "./pages/employee/Notifications";
 import { EmployeeSettings } from "./pages/employee/Settings";
+import {EmployeeProfile} from './pages/employee/Profile'
 
 // Company
 import { CompanyDashboard } from "./pages/company/Dashboard";
@@ -74,7 +76,13 @@ function App() {
             <Route path="/login" element={<Login />} />
           )
         }
-        <Route path="/signup" element={<Signup />} />
+        {
+          localStorage.getItem("user") || sessionStorage.getItem("user") ? (
+            <Route path="/signup" element={<Navigate to="/" replace />} />
+          ) : (
+            <Route path="/signup" element={<Signup />} />
+          )
+        }
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify" element={<EmailVerification />} />
 
@@ -88,7 +96,7 @@ function App() {
         <Route path="/candidate/saved" element={<CandidateSaved />} />
         <Route path="/candidate/notifications" element={<CandidateNotifications />} />
         <Route path="/candidate/settings" element={<CandidateSettings />} />
-
+        <Route path="/candidate/resume-onboarding" element={<ResumeOnboarding/>} />
         {/* Employee */}
         <Route path="/employee" element={<Navigate to="/employee/dashboard" replace />} />
         <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
@@ -100,6 +108,7 @@ function App() {
         <Route path="/employee/verify" element={<EmployeeVerify />} />
         <Route path="/employee/notifications" element={<EmployeeNotifications />} />
         <Route path="/employee/settings" element={<EmployeeSettings />} />
+        <Route path ="/employee/profile" element={<EmployeeProfile/>} />
 
         {/* Company */}
         <Route path="/company" element={<Navigate to="/company/dashboard" replace />} />
@@ -122,7 +131,7 @@ function App() {
         <Route path="/admin/jobs" element={<AdminJobs />} />
         <Route path="/admin/referrals" element={<AdminReferrals />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Routes>
     </BrowserRouter>
   );

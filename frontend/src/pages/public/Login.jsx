@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Sparkles, Mail, Lock } from "lucide-react";
+import ResumeOnboarding from "../../components/ResumeOnboarding";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -83,6 +84,7 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
 
 export const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -90,6 +92,7 @@ export const Login = () => {
     rememberMe: false,
   });
 
+  const showResumeParse = location.state?.showResumeParse;
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -127,7 +130,7 @@ export const Login = () => {
     // Password
     if (!password) {
       newErrors.password = "Password is required";
-    } 
+    }
     // else if (password.length < 8) {
     //   newErrors.password =
     //     "Password must be at least 8 characters";
@@ -189,13 +192,15 @@ export const Login = () => {
 
         setServerError(
           result.message ||
-            "Invalid email or password."
+          "Invalid email or password."
         );
+
 
         return;
       }
 
       const user = result.data?.user;
+
 
       if (!user) {
         setServerError(
@@ -236,9 +241,15 @@ export const Login = () => {
         );
       }
 
-      navigate(dashboard, {
-        replace: true,
-      });
+      if (user.role === "candidate" && showResumeParse) {
+        navigate("/candidate/resume-onboarding", {
+          replace: true,
+        });
+      } else {
+        navigate(dashboard, {
+          replace: true,
+        });
+      }
     } catch (error) {
       console.error("Login error:", error);
 
@@ -343,11 +354,10 @@ export const Login = () => {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className={`field pl-9 w-full ${
-                errors.email
+              className={`field pl-9 w-full ${errors.email
                   ? "border-red-400"
                   : ""
-              }`}
+                }`}
               placeholder="you@company.com"
               autoComplete="email"
               data-testid="login-email"
@@ -385,11 +395,10 @@ export const Login = () => {
               type="password"
               value={formData.password}
               onChange={handleChange}
-              className={`field pl-9 w-full ${
-                errors.password
+              className={`field pl-9 w-full ${errors.password
                   ? "border-red-400"
                   : ""
-              }`}
+                }`}
               placeholder="••••••••"
               autoComplete="current-password"
               data-testid="login-password"

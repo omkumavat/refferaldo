@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 app.use(bodyParser.json({ limit: '100mb' })); // Adjust the limit as needed
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+app.use("/public", express.static(path.join(process.cwd(), "public")));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -28,6 +29,18 @@ app.use(
 
 import authRoutes from "./Routes/authRoutes.js";
 app.use("/api/auth", authRoutes);
+
+import candidateRoutes from "./Routes/candidateRoutes.js";
+app.use("/api/candidate", candidateRoutes);
+
+import userRoutes from "./Routes/userRoutes.js";
+app.use("/api/user", userRoutes);
+
+import employeeRoutes from "./Routes/employeeRoutes.js";
+app.use("/api/employee", employeeRoutes);
+
+import companyRoutes from './Routes/companyRoutes.js';
+app.use("/api/company", companyRoutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

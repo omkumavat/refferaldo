@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { DashboardShell } from "../../components/layout/DashboardShell";
-import { LayoutDashboard, Users, Send, Briefcase, Gift, ShieldCheck, Bell, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Send, Briefcase, Gift, ShieldCheck, Bell, Settings,User } from "lucide-react";
 import { StatCard } from "../../components/StatCard";
 import { CandidateCard } from "../../components/CandidateCard";
 import { candidates } from "../../data/candidates";
@@ -16,12 +16,16 @@ const sidebar = [
   { to: "/employee/verify", label: "Verify Employment", icon: ShieldCheck },
   { to: "/employee/notifications", label: "Notifications", icon: Bell },
   { to: "/employee/settings", label: "Settings", icon: Settings },
+   { to: "/employee/profile", label: "Profile", icon: User },
 ];
 
 export const employeeSidebar = sidebar;
 
 export const EmployeeDashboard = () => {
   const [modal, setModal] = useState(null);
+  const [user] = useState(
+    JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+  )
   const [confirmed, setConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -32,7 +36,7 @@ export const EmployeeDashboard = () => {
   };
 
   return (
-    <DashboardShell role="employee" roleLabel="Employee" userName="Priya" sidebar={sidebar}>
+    <DashboardShell role="employee" roleLabel="Employee" userName={user?.name} sidebar={sidebar}>
       <div className="mb-8">
         <p className="eyebrow">Employee Referral Center</p>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mt-1">Refer great people. Get rewarded.</h1>

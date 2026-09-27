@@ -99,7 +99,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
             })}
           </nav>
 
-          <div className="mt-8 pt-6 border-t border-slate-100">
+          {/* <div className="mt-8 pt-6 border-t border-slate-100">
             <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Switch view</p>
             <div className="space-y-0.5">
               {roleSwitch.map((r) => (
@@ -116,7 +116,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
                 </Link>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </aside>
 

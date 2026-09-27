@@ -1,9 +1,11 @@
 import crypto from 'crypto';
 import User from '../models/User.js';
+import Employee from '../models/Employee.js'
+import Company from '../models/Company.js';
 import Verification from '../models/Verification.js';
 import { signToken } from '../utils/jwt.js';
 import { ok, fail } from '../utils/api.js';
-import {sendVerificationEmail} from './EmailService.js';
+import { sendVerificationEmail } from './EmailService.js';
 
 const cookieOpts = () => ({
     httpOnly: true,
@@ -13,7 +15,7 @@ const cookieOpts = () => ({
 });
 
 const personalEmailProviders = [
-    'gmail.com',
+    // 'gmail.com',
     'yahoo.com',
     'hotmail.com',
     'outlook.com',
@@ -31,6 +33,8 @@ export const register = async (req, res) => {
         email,
         password,
         role,
+        companyname,
+        companyweb
     } = req.body;
 
     if (role === 'admin') {
@@ -83,8 +87,29 @@ export const register = async (req, res) => {
         console.error('Error sending verification email:', err);
     });
 
-    if (process.env.NODE_ENV !== 'production') {
-        console.log(`Email verification token for ${normalizedEmail}: ${raw}`);
+    if (role === "employee") {
+        let company = await Company.findOne({
+            name: companyname.toLowerCase()
+        });
+
+        let comp;
+        if (!company) {
+            comp = await Company.create({
+                name:companyname,
+                website:companyweb,
+                employeeAssociated: 1
+            });
+            comp.save();
+        } else {
+            company.employeeAssociated++;
+            company.save();
+        }
+
+        const emp = await Employee.create({
+            company: comp._id,
+            user: user._id
+        })
+        emp.save();
     }
 
     return ok(

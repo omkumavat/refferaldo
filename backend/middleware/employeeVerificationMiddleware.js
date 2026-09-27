@@ -1,4 +1,4 @@
-import Employee from "../models/Employee";
+import Employee from "../models/Employee.js";
 export default async (req, res, next) => {
     try {
         const emp = await Employee.findOne({
