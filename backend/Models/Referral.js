@@ -1,61 +1,172 @@
 import mongoose from "mongoose";
-const s = new mongoose.Schema({
-    candidate: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
+
+const referralFormSchema = new mongoose.Schema(
+  {
     job: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Job",
+      default: null,
+      index: true,
     },
+
     company: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
+      index: true,
     },
-    employee: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
     },
-    referralRequest: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ReferralRequest'
+
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
+
+    description: {
+      type: String,
+      trim: true,
+    },
+
+    /**
+     * Public URL identifier.
+     *
+     * Example:
+     * /refer/apply/frontend-developer-8fj29k
+     */
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+
+    location: {
+      type: String,
+      trim: true,
+    },
+
+    workMode: {
+      type: String,
+      enum: ["remote", "hybrid", "onsite"],
+      default: "onsite",
+    },
+
+    employmentType: {
+      type: String,
+      enum: [
+        "full-time",
+        "part-time",
+        "contract",
+        "internship",
+        "freelance",
+      ],
+      default: "full-time",
+    },
+
+    experienceMin: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    experienceMax: {
+      type: Number,
+      min: 0,
+    },
+
+    skills: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
+    salaryMin: {
+      type: Number,
+      min: 0,
+    },
+
+    salaryMax: {
+      type: Number,
+      min: 0,
+    },
+
+    salaryCurrency: {
+      type: String,
+      default: "INR",
+    },
+
+    applicationDeadline: Date,
+
+    /**
+     * Controls whether the public form can
+     * receive submissions.
+     */
     status: {
-        type: String,
-        enum: ['submitted', 'under-review', 'interview', 'offer', 'hired', 'rejected'],
-        default: 'submitted'
+      type: String,
+      enum: ["draft", "active", "paused", "closed"],
+      default: "draft",
+      index: true,
     },
-    rewardAmount: {
-        type: Number,
-        default: 0,
-        min: 0
+
+    /**
+     * Useful for analytics.
+     */
+    views: {
+      type: Number,
+      default: 0,
     },
-    rewardStatus: {
-        type: String,
-        enum: ['pending', 'eligible', 'paid', 'cancelled'],
-        default: 'pending'
+
+    submissions: {
+      type: Number,
+      default: 0,
     },
-    submittedAt: {
-        type: Date,
-        default: Date.now
+
+    /**
+     * Allow candidate to submit more than once?
+     */
+    allowMultipleSubmissions: {
+      type: Boolean,
+      default: false,
     },
-    hiredAt: Date
-}, {
-    timestamps: true
+
+    /**
+     * Show employee/company information
+     * on the public page.
+     */
+    showCompanyInfo: {
+      type: Boolean,
+      default: true,
+    },
+
+    /**
+     * Optional custom thank-you message.
+     */
+    thankYouMessage: {
+      type: String,
+      default: "Thank you for your application.",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+referralFormSchema.index({
+  createdBy: 1,
+  status: 1,
 });
-s.index({
-    candidate: 1,
-    job: 1,
-    employee: 1
-}, {
-    unique: true
+
+referralFormSchema.index({
+  company: 1,
+  status: 1,
 });
-s.index({
-    company: 1,
-    status: 1
-});
-export default mongoose.model('Referral', s);
+
+export default mongoose.model("ReferralForm", referralFormSchema);

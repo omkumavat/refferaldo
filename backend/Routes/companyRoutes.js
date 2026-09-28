@@ -9,7 +9,7 @@ import {getCompanyJobs} from '../controllers/companyController.js';
 import {body,param} from 'express-validator';
 import v from '../middleware/validationMiddleware.js';
 
-router.get('/get-jobs',  getCompanyJobs)
+router.get('/get-jobs/:id',  getCompanyJobs)
 // const companyFields = [body('name').optional().trim().isLength({
 //     min: 2,
 //     max: 150

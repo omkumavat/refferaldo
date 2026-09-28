@@ -36,6 +36,8 @@ import { EmployeeVerify } from "./pages/employee/Verify";
 import { EmployeeNotifications } from "./pages/employee/Notifications";
 import { EmployeeSettings } from "./pages/employee/Settings";
 import {EmployeeProfile} from './pages/employee/Profile'
+import { ReferJob } from "./pages/employee/ReferJob";
+import { CreateReferral } from "./pages/employee/CreateReferral";
 
 // Company
 import { CompanyDashboard } from "./pages/company/Dashboard";
@@ -109,6 +111,8 @@ function App() {
         <Route path="/employee/notifications" element={<EmployeeNotifications />} />
         <Route path="/employee/settings" element={<EmployeeSettings />} />
         <Route path ="/employee/profile" element={<EmployeeProfile/>} />
+        <Route path ="/employee/refer-job" element={<ReferJob/>} />
+        <Route path ="/employee/refer-job/create" element={<CreateReferral/>} />
 
         {/* Company */}
         <Route path="/company" element={<Navigate to="/company/dashboard" replace />} />

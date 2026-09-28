@@ -10,6 +10,7 @@ import { toast } from "sonner";
 const sidebar = [
   { to: "/employee/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/employee/jobs", label: "Company Jobs", icon: Briefcase },
+  { to: "/employee/refer-job", label: "Refer a Job", icon: Briefcase },
   { to: "/employee/candidates", label: "Candidates", icon: Users },
   { to: "/employee/referrals", label: "My Referrals", icon: Send },
   { to: "/employee/rewards", label: "Rewards", icon: Gift },

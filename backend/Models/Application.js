@@ -1,32 +1,86 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const s = new mongoose.Schema({
+const referralSubmissionSchema = new mongoose.Schema(
+  {
+    form: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ReferralForm",
+      required: true,
+      index: true,
+    },
+
     candidate: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
-    job: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job',
-        required: true
+
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
+
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+
+    phone: {
+      type: String,
+      trim: true,
+    },
+
+    resumeUrl: {
+      type: String,
+      trim: true,
+    },
+
+    answers: [
+      {
+        question: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ReferralQuestion",
+          required: true,
+        },
+
+        value: mongoose.Schema.Types.Mixed,
+      },
+    ],
+
     status: {
-        type: String,
-        enum: ['applied', 'under-review', 'interview', 'offer', 'rejected', 'hired'],
-        default: 'applied'
+      type: String,
+      enum: [
+        "new",
+        "reviewing",
+        "shortlisted",
+        "rejected",
+        "referred",
+        "hired",
+      ],
+      default: "new",
+      index: true,
     },
-    appliedAt: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    timestamps: true
+
+    notes: String,
+  },
+  {
+    timestamps: true,
+  }
+);
+
+referralSubmissionSchema.index({
+  form: 1,
+  createdAt: -1,
 });
-s.index({
-    candidate: 1,
-    job: 1
-}, {
-    unique: true
+
+referralSubmissionSchema.index({
+  email: 1,
 });
-export default mongoose.model('Application', s);
+
+export default mongoose.model(
+  "ReferralSubmission",
+  referralSubmissionSchema
+);

@@ -4,7 +4,7 @@ import Job from '../models/Job.js';
 import Notification from '../models/Notification.js'
 import { ok, fail, pick } from '../utils/api.js'
 import { getPagination, meta } from '../utils/pagination.js'
-import { fetchJobsByCompanyName, fetchJobsFromCareersPage } from "../utils/jobsFetcher.js";
+import { fetchJobsForSources } from "../utils/jobsFetcher.js";
 
 export const create = async (req, res) => {
     if (req.user.role !== 'company' && req.user.role !== 'admin') return fail(res, 'Only company users or admins can create companies', 403);
@@ -112,13 +112,32 @@ export const removeEmployee = async (req, res) => {
 
 export const getCompanyJobs = async (req, res) => {
     try {
-        const { companyname, companyweb, company_career } = req.query;
-        console.log(companyname, company_career)
-        const { jobs, matchedSlug } = await fetchJobsByCompanyName(companyname);
-        const jobs2 = await fetchJobsFromCareersPage(company_career);
-        console.log(jobs, jobs2, matchedSlug)
-    } catch (err) {
+        const { id } = req.params;
 
+        const profile = await Employee.findOne({
+            user: id
+        }).populate('company');
+
+        if (profile.company.verificationStatus === 'pending') {
+            return ok(res, {verified:false, jobs:[], company: profile.company}, 'Employee added for verification', 201);
+        }
+
+        const data = {
+            companyname: profile.company.name,
+            sources:profile.company.sources
+        }
+        const result = await fetchJobsForSources(data);
+
+        res.status(200).json({
+            verified:true,
+            success: true,
+            jobs: result,
+
+        });
+        return ok(res, {verified:true, jobs: result, company: profile.company}, 'Employee added for verification', 201);
+    } catch (error) {
+        console.error("Failed to fetch company jobs:", error);
+        res.status(500).json({ success: false, message: "Failed to fetch jobs" });
     }
 }
 export const jobs = async (req, res) => {

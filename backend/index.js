@@ -42,6 +42,12 @@ app.use("/api/employee", employeeRoutes);
 import companyRoutes from './Routes/companyRoutes.js';
 app.use("/api/company", companyRoutes);
 
+import referralFormRoutes from './Routes/referralFormRoutes.js'
+app.use('/api/referrals/', referralFormRoutes);
+
+import referralSubmissionRoutes from "./Routes/referralSubmissionRoutes.js";
+app.use('/api/referrals/submit', referralSubmissionRoutes)
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '..', 'src', 'public')));
