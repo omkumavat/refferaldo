@@ -34,7 +34,7 @@ export const EmployeeJobs = () => {
 
         const result = await response.json();
         console.log(result);
-        
+
 
         if (!response.ok || !result.success) {
           throw new Error(result.message || "Failed to fetch company details");
@@ -62,7 +62,7 @@ export const EmployeeJobs = () => {
 
   return (
     <DashboardShell
-    userName={localUser?.name}
+      userName={localUser?.name}
       role="employee"
       roleLabel="Employee"
       sidebar={employeeSidebar}

@@ -1,5 +1,5 @@
 import ReferralForm from "../models/Referral.js";
-import ReferralQuestion from "../models/Application.js";
+import ReferralQuestion from "../Models/ReferralQuestion.js";
 
 import {
   createReferralFormService,
@@ -44,7 +44,7 @@ export const getMyReferralForms = async (
   res
 ) => {
   try {
-    const userId = req.user._id;
+    const userId = req.params.id
 
     const forms =
       await ReferralForm.find({

@@ -1,0 +1,25 @@
+{
+  "info":{"name":"Referly Employee Referral Marketplace API","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable":[{"key":"baseUrl","value":"http://localhost:5000"},{"key":"jobId","value":""},{"key":"referralRequestId","value":""},{"key":"referralId","value":""}],
+  "item":[
+    {"name":"Health","request":{"method":"GET","url":"{{baseUrl}}/health"}},
+    {"name":"Auth","item":[
+      {"name":"Register","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"name\":\"Rhea Malhotra\",\"email\":\"rhea@example.dev\",\"password\":\"StrongPass@2026\",\"role\":\"candidate\"}"},"url":"{{baseUrl}}/api/auth/register"}},
+      {"name":"Login","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"email\":\"candidate1@referly.dev\",\"password\":\"Candidate@2026Secure\"}"},"url":"{{baseUrl}}/api/auth/login"}},
+      {"name":"Me","request":{"method":"GET","url":"{{baseUrl}}/api/auth/me"}},
+      {"name":"Logout","request":{"method":"POST","url":"{{baseUrl}}/api/auth/logout"}}
+    ]},
+    {"name":"Jobs","item":[
+      {"name":"Browse active jobs","request":{"method":"GET","url":"{{baseUrl}}/api/jobs?page=1&limit=20&workMode=remote"}},
+      {"name":"Get job","request":{"method":"GET","url":"{{baseUrl}}/api/jobs/{{jobId}}"}},
+      {"name":"Apply","request":{"method":"POST","url":"{{baseUrl}}/api/candidates/jobs/{{jobId}}/apply"}}
+    ]},
+    {"name":"Candidate","item":[
+      {"name":"Profile","request":{"method":"GET","url":"{{baseUrl}}/api/users/profile"}},
+      {"name":"Applications","request":{"method":"GET","url":"{{baseUrl}}/api/candidates/applications"}},
+      {"name":"Referrals","request":{"method":"GET","url":"{{baseUrl}}/api/candidates/referrals"}},
+      {"name":"Recommendations","request":{"method":"GET","url":"{{baseUrl}}/api/candidates/recommended-jobs"}}
+    ]},
+    {"name":"Notifications","item":[{"name":"List","request":{"method":"GET","url":"{{baseUrl}}/api/notifications"}},{"name":"Read all","request":{"method":"PATCH","url":"{{baseUrl}}/api/notifications/read-all"}}]}
+  ]
+}

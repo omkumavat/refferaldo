@@ -80,7 +80,8 @@ referralSubmissionSchema.index({
   email: 1,
 });
 
-export default mongoose.model(
-  "ReferralSubmission",
-  referralSubmissionSchema
-);
+const ReferralSubmission =
+  mongoose.models.ReferralSubmission ||
+  mongoose.model("ReferralSubmission", referralSubmissionSchema);
+
+export default ReferralSubmission;

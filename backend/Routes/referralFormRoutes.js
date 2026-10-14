@@ -21,8 +21,8 @@ router.post(
 );
 
 router.get(
-    "/my",
-    authMiddleware,
+    "/my/:id",
+    // authMiddleware,
     getMyReferralForms
 );
 

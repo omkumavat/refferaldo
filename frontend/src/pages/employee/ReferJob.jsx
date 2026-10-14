@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useState} from "react";
 import { Link } from "react-router-dom";
 import {
   BriefcaseBusiness,
@@ -11,6 +11,7 @@ import {
 
 import { DashboardShell } from "../../components/layout/DashboardShell";
 import { employeeSidebar } from "./Dashboard";
+import { MyReferralForms } from "../../components/referral/ReferralForms";
 
 export const ReferJob = () => {
     const [localUser] = useState(
@@ -103,6 +104,8 @@ export const ReferJob = () => {
             </Link>
           </div>
         </div>
+
+        <MyReferralForms />
 
         {/* How it works */}
         <div className="mt-10">

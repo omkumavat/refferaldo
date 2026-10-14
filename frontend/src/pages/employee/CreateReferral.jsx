@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import {
     ArrowLeft,
     Save,
@@ -10,7 +10,6 @@ import {
 
 import { DashboardShell } from "../../components/layout/DashboardShell";
 import { employeeSidebar } from "./Dashboard";
-
 import { JobDetailsForm } from "../../components/referral/JobDetailsForm";
 import { SuggestedQuestions } from "../../components/referral/SuggestedQuestions";
 import { QuestionBuilder } from "../../components/referral/QuestionBuilder";
@@ -21,6 +20,10 @@ export const CreateReferral = () => {
     const [localUser] = useState(
         JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
     )
+    const [publicLink, setPublicLink] = useState("");
+    const [searchParams] = useSearchParams();
+    const editId = searchParams.get("edit"); // null when creating
+    const isEdit = Boolean(editId);
 
     const [job, setJob] = useState({
         title: "",
@@ -238,6 +241,23 @@ export const CreateReferral = () => {
             );
         }
     };
+
+    useEffect(() => {
+  if (!isEdit) return;
+
+  const loadJob = async () => {
+    const res = await getReferralById(editId);
+    if (res.success) {
+      setJob(res.job); // your existing form state
+    } else {
+      console.error(res.error);
+      navigate("/employee/refer-job"); // bad or foreign id: leave the page
+    }
+    setLoadingJob(false);
+  };
+
+  loadJob();
+}, [editId]);
 
     return (
         <DashboardShell

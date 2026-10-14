@@ -1,0 +1,1 @@
+const router=require('express').Router(),auth=require('../middleware/authMiddleware'),c=require('../controllers/userController');router.use(auth);router.get('/profile',c.getProfile);router.put('/profile',c.updateProfile);router.get('/',require('../middleware/roleMiddleware')('admin'),c.listUsers);router.delete('/account',c.deleteAccount);module.exports=router;

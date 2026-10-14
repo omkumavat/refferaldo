@@ -1,0 +1,1 @@
+require('dotenv').config();const app=require('./app'),connectDB=require('./config/db');const port=process.env.PORT||5000;connectDB().then(()=>app.listen(port,()=>console.log(`Referly API listening on port ${port}`))).catch(err=>{console.error('Startup failed:',err.message);process.exit(1);});

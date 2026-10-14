@@ -1,7 +1,6 @@
 import ReferralForm from "../models/Referral.js";
-import ReferralQuestion from "../models/Application.js";
-import ReferralSubmission from "../models/Job.js";
-
+import ReferralQuestion from "../Models/ReferralQuestion.js";
+import ReferralSubmission from "../Models/Application.js"
 
 // =====================================================
 // SUBMIT PUBLIC REFERRAL

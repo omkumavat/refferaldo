@@ -113,11 +113,11 @@ export const removeEmployee = async (req, res) => {
 export const getCompanyJobs = async (req, res) => {
     try {
         const { id } = req.params;
-
+        
         const profile = await Employee.findOne({
             user: id
         }).populate('company');
-
+        
         if (profile.company.verificationStatus === 'pending') {
             return ok(res, {verified:false, jobs:[], company: profile.company}, 'Employee added for verification', 201);
         }
