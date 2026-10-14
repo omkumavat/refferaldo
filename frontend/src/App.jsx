@@ -58,6 +58,7 @@ import { AdminJobs } from "./pages/admin/Jobs";
 import { AdminReferrals } from "./pages/admin/Referrals";
 
 import "./App.css";
+import ApplyReferral from "./pages/public/ApplyReferral";
 
 function App() {
   return (
@@ -87,6 +88,7 @@ function App() {
         }
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify" element={<EmailVerification />} />
+        <Route path="/apply/:slug" element={<ApplyReferral />} />
 
         {/* Candidate */}
         <Route path="/candidate" element={<Navigate to="/candidate/dashboard" replace />} />

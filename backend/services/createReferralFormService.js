@@ -1,6 +1,7 @@
 import ReferralForm from "../models/Referral.js";
 import ReferralQuestion from "../Models/ReferralQuestion.js";
 import Job from "../models/Job.js";
+import Employee from "../models/Employee.js";
 
 export const createReferralFormService = async ({
   userId,
@@ -17,6 +18,8 @@ export const createReferralFormService = async ({
     skills,
     salaryMin,
     salaryMax,
+    status,
+    slug,
     salaryCurrency,
     applicationDeadline,
     questions = [],
@@ -32,11 +35,20 @@ export const createReferralFormService = async ({
     .toString(36)
     .substring(2, 8);
 
-  const slug = `${slugBase}-${randomPart}`;
+    let slugs
+    if(slug === ""){
+      slugs = `${slugBase}-${randomPart}-${userId.toString().slice(0,4)}`;
+    }else{
+      slugs = `${userId.toString().slice(0,4)}-${slug}`;
+    }
+
+  const emp = await Employee.findOne({
+    user:userId
+  })
 
   const referralForm = await ReferralForm.create({
     createdBy: userId,
-
+    company: emp.company,
     title,
     description,
     location,
@@ -78,9 +90,8 @@ export const createReferralFormService = async ({
     applicationDeadline:
       applicationDeadline || undefined,
 
-    slug,
-
-    status: "draft",
+    slug:slugs,
+    status,
   });
 
   if (questions.length > 0) {

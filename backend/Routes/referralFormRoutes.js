@@ -27,7 +27,7 @@ router.get(
 );
 
 router.get(
-    "/my/:id",
+    "/:id",
     authMiddleware,
     getMyReferralForm
 );

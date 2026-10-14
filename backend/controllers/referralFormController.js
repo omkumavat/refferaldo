@@ -83,10 +83,7 @@ export const getMyReferralForm = async (
     const { id } = req.params;
 
     const form =
-      await ReferralForm.findOne({
-        _id: id,
-        createdBy: req.user._id,
-      }).lean();
+      await ReferralForm.findById(id).lean();
 
     if (!form) {
       return res.status(404).json({
@@ -97,7 +94,7 @@ export const getMyReferralForm = async (
 
     const questions =
       await ReferralQuestion.find({
-        form: form._id,
+        form:id,
       })
         .sort({
           order: 1,
@@ -106,7 +103,6 @@ export const getMyReferralForm = async (
 
     return res.status(200).json({
       success: true,
-
       data: {
         ...form,
         questions,
@@ -136,10 +132,7 @@ export const updateReferralForm = async (
     const { id } = req.params;
 
     const form =
-      await ReferralForm.findOne({
-        _id: id,
-        createdBy: req.user._id,
-      });
+      await ReferralForm.findById(id);
 
     if (!form) {
       return res.status(404).json({
