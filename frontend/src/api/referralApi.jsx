@@ -46,19 +46,19 @@ export const getPublicReferralForm = async (slug) => {
 
 // Submit an application for the referral
 export const submitReferralApplication = async (
-  referralId,
-  answers
+  slug,
+  answers, userId, name, email, phone, resumeUrl
 ) => {
   const response = await fetch(
-    `${API_BASE_URL}/referral-submissions`,
+    `${API_BASE_URL}/referrals/submit/${slug}`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        referralId,
         answers,
+        name, email, phone, resumeUrl
       }),
     }
   );
@@ -71,3 +71,49 @@ export const submitReferralApplication = async (
 
   return data;
 };
+
+const API = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+
+async function request(url, options = {}) {
+  const response = await fetch(`${API}${url}`, {
+    credentials: "include",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Request failed");
+  }
+
+  return result;
+}
+
+// export const getFormAnalytics = (formId) =>
+//   request(`/referrals/submit/${formId}/analytics`);
+
+export const getFormSubmissions = (formId, filters = {}) => {
+  const params = new URLSearchParams(filters);
+  return request(
+    `/referrals/submit/${formId}/submissions?${params}`
+  );
+};
+
+export const getBestMatches = (formId) =>
+  request(`/referrals/submit/${formId}/best-matches`);
+
+export const updateSubmissionStatus = (submissionId, status) =>
+  request(`/referrals/submit/${submissionId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+
+export const referCandidate = (submissionId) =>
+  request(`/referrals/submit/${submissionId}/refer`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });

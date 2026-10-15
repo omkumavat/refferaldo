@@ -27,6 +27,10 @@ const ApplyReferral = () => {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
+   const [localUser] = useState(
+          JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+      );
+
   useEffect(() => {
     let cancelled = false;
 
@@ -43,6 +47,9 @@ const ApplyReferral = () => {
         if (!result.form) {
           throw new Error("Referral form was not found.");
         }
+
+        console.log(result);
+        
         
         if (cancelled) return;
 
@@ -98,6 +105,8 @@ const ApplyReferral = () => {
       return;
     }
 
+    setError("");
+
     try {
       setSubmitting(true);
 
@@ -108,9 +117,17 @@ const ApplyReferral = () => {
         answer: answers[question._id || question.id] ?? "",
       }));
 
+      console.log(formattedAnswers);
+      
+
       await submitReferralApplication(
-        referralId,
-        formattedAnswers
+        slug,
+        formattedAnswers,
+        localUser?.id || "",
+        localUser?.name || "",
+        localUser?.email || "",
+        localUser?.phone || "",
+        localUser?.resumeUrl || ""
       );
 
       setShowSuccess(true);

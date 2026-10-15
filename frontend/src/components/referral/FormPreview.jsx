@@ -63,10 +63,16 @@ export const FormPreview = ({
       <div className="p-4">
         <div className="overflow-hidden rounded-xl bg-white shadow-sm">
           <div className="border-b border-slate-100 p-6">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-              <BriefcaseBusiness className="h-5 w-5" />
-            </div>
 
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <BriefcaseBusiness className="h-5 w-5" />
+              </div>
+
+              <h2 className="text-xl font-bold text-slate-900">
+                {job.company?.name || "Your job title"}
+              </h2>
+            </div>
             <h2 className="text-xl font-bold text-slate-900">
               {job.title || "Your job title"}
             </h2>
@@ -208,20 +214,20 @@ const PreviewQuestion = ({
       {["text", "email", "phone", "number", "url"].includes(
         question.type
       ) && (
-        <input
-          disabled={disabled}
-          required={disabled ? false : question.required}
-          type={
-            question.type === "phone"
-              ? "tel"
-              : question.type
-          }
-          value={value}
-          placeholder={question.placeholder || "Your answer..."}
-          onChange={(e) => onChange(e.target.value)}
-          className={common}
-        />
-      )}
+          <input
+            disabled={disabled}
+            required={disabled ? false : question.required}
+            type={
+              question.type === "phone"
+                ? "tel"
+                : question.type
+            }
+            value={value}
+            placeholder={question.placeholder || "Your answer..."}
+            onChange={(e) => onChange(e.target.value)}
+            className={common}
+          />
+        )}
 
       {question.type === "file" && (
         <input

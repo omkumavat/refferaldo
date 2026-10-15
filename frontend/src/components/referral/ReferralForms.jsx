@@ -107,7 +107,7 @@ export const MyReferralForms = () => {
   // Drafts open in the builder; active forms open publicly.
   const openForm = (form) => {
     if (form.status === "active") {
-      navigate(`/apply/${form.slug}`);
+      navigate(`/employee/refer-job/submission?formId=${form._id}`);
       return;
     }
 

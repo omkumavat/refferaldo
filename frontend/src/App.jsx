@@ -59,6 +59,7 @@ import { AdminReferrals } from "./pages/admin/Referrals";
 
 import "./App.css";
 import ApplyReferral from "./pages/public/ApplyReferral";
+import ReferralAnalytics from "./pages/employee/ReferralAnalytics";
 
 function App() {
   return (
@@ -115,6 +116,7 @@ function App() {
         <Route path ="/employee/profile" element={<EmployeeProfile/>} />
         <Route path ="/employee/refer-job" element={<ReferJob/>} />
         <Route path ="/employee/refer-job/create" element={<CreateReferral/>} />
+        <Route path ="/employee/refer-job/submission" element={<ReferralAnalytics/>} />
 
         {/* Company */}
         <Route path="/company" element={<Navigate to="/company/dashboard" replace />} />

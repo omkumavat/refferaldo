@@ -43,7 +43,7 @@ import companyRoutes from './Routes/companyRoutes.js';
 app.use("/api/company", companyRoutes);
 
 import referralFormRoutes from './Routes/referralFormRoutes.js'
-app.use('/api/referrals/', referralFormRoutes);
+app.use('/api/referrals', referralFormRoutes);
 
 import referralSubmissionRoutes from "./Routes/referralSubmissionRoutes.js";
 app.use('/api/referrals/submit', referralSubmissionRoutes)

@@ -6,24 +6,4 @@ const {
     ok,
     fail
 } = require('../utils/api');
-exports.calculate = async (req, res) => {
-    const p = await Candidate.findOne({
-        user: req.user._id
-    });
-    const j = await Job.findById(req.params.jobId);
-    if (!p || !j) return fail(res, 'Candidate profile or job not found', 404);
-    const result = await ai.calculateJobMatch(p, j);
-    const m = await Match.findOneAndUpdate({
-        candidate: req.user._id,
-        job: j._id
-    }, {
-        candidate: req.user._id,
-        job: j._id,
-        ...result,
-        generatedAt: new Date()
-    }, {
-        upsert: true,
-        new: true
-    });
-    return ok(res, m, 'Match calculated');
-};
+
