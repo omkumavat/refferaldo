@@ -16,7 +16,7 @@ const sidebar = [
   { to: "/candidate/applications", label: "Applications", icon: FileText },
   { to: "/candidate/referrals", label: "Referrals", icon: Send },
   { to: "/candidate/saved", label: "Saved Jobs", icon: Bookmark },
-  { to: "/candidate/profile", label: "Profile", icon: User },
+  { to: "/candidate/profile/", label: "Profile", icon: User ,requiresId: true},
   { to: "/candidate/notifications", label: "Notifications", icon: Bell },
   { to: "/candidate/settings", label: "Settings", icon: Settings },
 ];

@@ -9,6 +9,10 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
 
+  const [localUser] = useState(
+            JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+        );
+
   const roleSwitch = [
     { label: "Candidate", to: "/candidate/dashboard", key: "candidate" },
     { label: "Employee", to: "/employee/dashboard", key: "employee" },
@@ -20,7 +24,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
     try {
       // Call backend logout API
       await fetch(
-         `${import.meta.env.VITE_API_URL}/auth/logout`,
+        `${import.meta.env.VITE_API_URL}/auth/logout`,
         // `${API_URL}/auth/logout`,
         {
           method: "POST",
@@ -78,10 +82,13 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
           <nav className="space-y-0.5">
             {sidebar.map((item) => {
               const Icon = item.icon;
+              const linkTo = item.requiresId
+                ? `${item.to}/${localUser?.id.slice(0,4)}-${localUser?.id.slice(4,9)}/private`
+                : item.to;
               return (
                 <NavLink
-                  key={item.to}
-                  to={item.to}
+                  key={linkTo}
+                  to={linkTo}
                   end={item.end}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>

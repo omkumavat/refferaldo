@@ -43,7 +43,7 @@ const referralSubmissionSchema = new mongoose.Schema(
         question: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "ReferralQuestion",
-          required: true,
+          // required: true,
         },
 
         value: mongoose.Schema.Types.Mixed,

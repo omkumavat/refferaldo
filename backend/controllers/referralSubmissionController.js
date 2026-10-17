@@ -2,6 +2,8 @@ import ReferralForm from "../models/Referral.js";
 import ReferralQuestion from "../Models/ReferralQuestion.js";
 import ReferralSubmission from "../Models/Application.js"
 import ReferralMatch from "../Models/Match.js";
+import CandidateProfile from "../models/CandidateProfile.js";
+import User from "../models/User.js";
 import mongoose from "mongoose";
 import {
   calculateReferralMatch,
@@ -23,7 +25,7 @@ export const submitReferral = async (
       resumeUrl,
       answers = [],
     } = req.body;
-    console.log(answers);
+    // console.log(answers);
 
 
     const form =
@@ -236,6 +238,275 @@ export const updateSubmissionStatus = async (req, res) => {
     });
   }
 };
+
+const getEmployeeCompanyId = async (userId) => {
+  const employee = await Employee.findOne({ user: userId })
+    .select("company")
+    .lean();
+
+  return employee?.company?._id || employee?.company || null;
+};
+
+// GET /api/employee/candidates/most-referred
+export const getMostReferredCandidates = async (req, res) => {
+  try {
+    const ranked = await ReferralSubmission.aggregate([
+      {
+        $match: {
+          status: "referred",
+          candidate: { $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$candidate",
+          referralCount: { $sum: 1 },
+        },
+      },
+      { $sort: { referralCount: -1, _id: 1 } },
+      { $limit: 20 },
+    ]);
+
+    if (!ranked.length) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    // if(ranked.length === 0){
+    //    const 
+    // }
+
+    const ids = ranked.map((item) => item._id);
+
+    const [users, profiles] = await Promise.all([
+      User.find({
+        _id: { $in: ids },
+        role: "candidate",
+      })
+        .select("name email phone location photo")
+        .lean(),
+
+      CandidateProfile.find({ user: { $in: ids } }).lean(),
+    ]);
+
+    const userMap = new Map(
+      users.map((user) => [String(user._id), user])
+    );
+
+    const profileMap = new Map(
+      profiles.map((profile) => [String(profile.user), profile])
+    );
+
+    // Preserve referral ranking after retrieving user/profile records.
+    const data = ranked
+      .map(({ _id, referralCount }) => {
+        const user = userMap.get(String(_id));
+        if (!user) return null;
+
+        const profile = profileMap.get(String(_id)) || {};
+
+        return {
+          id: String(user._id),
+          name: user.name,
+          email: user.email,
+          phone: user.phone || "",
+          location: user.location || "",
+          photo: user.photo || "",
+          headline: profile.headline || "",
+          experience: `${profile.experienceYears ?? 0} years`,
+          skills: profile.skills || [],
+          match: 0,
+          referralCount,
+          verificationStatus: profile.verificationStatus || "pending",
+          verifications: {
+            email: Boolean(user.isEmailVerified),
+          },
+        };
+      })
+      .filter(Boolean);
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("getMostReferredCandidates:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch candidates.",
+    });
+  }
+};
+
+// GET /api/employee/referral-forms/available
+export const getAvailableReferralForms = async (req, res) => {
+  try {
+    // const companyId = await getEmployeeCompanyId(req.params.id);
+
+    // if (!companyId) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Your employee account is not linked to a company.",
+    //   });
+    // }
+
+    const forms = await ReferralForm.find({
+      createdBy: req.params.userId,
+      status: "active",
+      $or: [
+        { deadline: null },
+        { deadline: { $exists: false } },
+        { deadline: { $gte: new Date() } },
+      ],
+    })
+      .select(
+        "title description job location workMode employmentType experience skills deadline submissions"
+      )
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const submissions = await ReferralSubmission.find({
+      form: { $in: forms.map((f) => f._id) },
+      candidate: req.params.candidateId,
+      status:"referred",
+    }).lean();
+
+    const submissionMap = submissions.map((sub) => ({
+      formId: sub.form.toString(),
+      referred: true
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        forms,
+        submissions: submissionMap,
+      }
+    });
+  } catch (error) {
+    console.error("getAvailableReferralForms:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch referral forms.",
+    });
+  }
+};
+
+export const referCandidateToForm = async (req, res) => {
+  try {
+    const { formId, candidateId } = req.params;
+
+    if (
+      !mongoose.isValidObjectId(formId) ||
+      !mongoose.isValidObjectId(candidateId)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid form or candidate ID.",
+      });
+    }
+
+    // const companyId = await getEmployeeCompanyId(candidateId);
+
+    // if (!companyId) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Your employee account is not linked to a company.",
+    //   });
+    // }
+
+    const [form, candidate] = await Promise.all([
+      ReferralForm.findOne({
+        _id: formId,
+        // company: companyId,
+        status: "active",
+      }),
+      User.findOne({
+        _id: candidateId,
+        role: "candidate",
+        isActive: { $ne: false },
+      }).select("name email phone"),
+    ]);
+
+    if (!form) {
+      return res.status(404).json({
+        success: false,
+        message: "Active referral form not found for your company.",
+      });
+    }
+
+    if (form.deadline && new Date(form.deadline) < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "The referral form deadline has passed.",
+      });
+    }
+
+    if (!candidate) {
+      return res.status(404).json({
+        success: false,
+        message: "Candidate not found.",
+      });
+    }
+
+    const duplicate = await ReferralSubmission.exists({
+      form: formId,
+      candidate: candidateId,
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        success: false,
+        message: "This candidate has already been submitted to this form.",
+      });
+    }
+
+    const submission = await ReferralSubmission.create({
+      form: form._id,
+      candidate: candidate._id,
+      name: candidate.name,
+      email: candidate.email,
+      phone: candidate.phone || "",
+      answers: [],
+      status: "referred",
+    });
+
+    await ReferralForm.updateOne(
+      { _id: form._id },
+      { $inc: { submissions: 1 } }
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Candidate referred successfully.",
+      data: {
+        submissionId: submission._id,
+        candidateId: candidate._id,
+        formId: form._id,
+        status: submission.status,
+      },
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "This candidate has already been submitted to this form.",
+      });
+    }
+
+    console.error("referCandidateToForm:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to refer candidate.",
+    });
+  }
+};
+
 
 export const getFormSubmissions = async (req, res) => {
   try {

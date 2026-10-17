@@ -4,7 +4,10 @@ import {
   getFormSubmissions,
   submitReferral,
   updateSubmissionStatus,
-  getBestMatches
+  getBestMatches,
+   getMostReferredCandidates,
+  getAvailableReferralForms,
+  referCandidateToForm,
 } from "../controllers/referralSubmissionController.js";
 
 const router = express.Router();
@@ -31,6 +34,22 @@ router.get(
 
 router.post(
   "/:submissionId/refer",
+  updateSubmissionStatus,
 )
+
+router.get(
+  "/candidates/most-referred",
+  getMostReferredCandidates
+);
+
+router.get(
+  "/referral-forms/available/:userId/:candidateId",
+  getAvailableReferralForms
+);
+
+router.post(
+  "/referral-forms/:formId/refer/:candidateId",
+  referCandidateToForm
+);
 
 export default router;

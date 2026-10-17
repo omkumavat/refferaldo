@@ -105,7 +105,7 @@ export const ReferJob = () => {
           </div>
         </div>
 
-        <MyReferralForms />
+        {/* <MyReferralForms /> */}
 
         {/* How it works */}
         <div className="mt-10">

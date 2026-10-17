@@ -11,7 +11,8 @@ import {body,param} from 'express-validator';
 import v from '../middleware/validationMiddleware.js';
 
 // router.get('/', authMiddleware, role('company', 'admin'), c.list);
-router.get('/profile/:id', authMiddleware, requireRole('candidate'), getProfile);
+router.get('/profile/private/:id', authMiddleware, requireRole('candidate'), getProfile);
+router.get('/profile/public/:id', getProfile);
 router.put('/profile/update', authMiddleware, requireRole('candidate'), [body('experienceYears').optional().isFloat({
     min: 0,
     max: 60
@@ -30,4 +31,18 @@ router.post('/profile/resume/parse/:id', authMiddleware, requireRole('candidate'
 // })], v, c.referralRequest);
 // router.get('/recommended-jobs', auth, role('candidate'), c.recommended);
 // router.get('/jobs/:jobId/match', auth, role('candidate'), param('jobId').isMongoId(), v, m.calculate);
+
+router.get("/resume/download", authMiddleware, async (req, res) => {
+  try {
+    const filePath = `http://localhost:4000/public/resumes/${req.params.userId}`; 
+    const username = req.user.name || "candidate"; 
+
+    return res.download(filePath, `${username}-resume.pdf`)
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to download resume",
+    });
+  }
+});
 export default router;

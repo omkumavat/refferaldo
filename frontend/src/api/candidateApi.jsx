@@ -86,19 +86,20 @@ const dummyProfile = {
     },
 };
 
-export const getCandidateProfile = async (userId) => {
+export const getCandidateProfile = async (userId, security) => {
     try {
-        const API_URL = import.meta.env.VITE_API_URL;
+        // console.log(security, userId)
+        const API_URL = `${import.meta.env.VITE_API_URL}/candidate/profile/${security}/${userId}`;
 
         const [response_profile, response_user] = await Promise.all([
-            fetch(`${API_URL}/candidate/profile/${userId}`, {
+            fetch(API_URL, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
             }),
-            fetch(`${API_URL}/user/profile/${userId}`, {
+            fetch(`${import.meta.env.VITE_API_URL}/user/profile/${userId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

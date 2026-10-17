@@ -133,7 +133,7 @@ const ApplyReferral = () => {
       setShowSuccess(true);
     } catch (err) {
       setError(
-        err.message || "Application submission failed. Please try again."
+        "Application submission failed. Please try again."
       );
     } finally {
       setSubmitting(false);

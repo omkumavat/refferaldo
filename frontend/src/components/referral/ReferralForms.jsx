@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import { DashboardShell } from "../../components/layout/DashboardShell";
-// import { employeeSidebar } from "./Dashboard";
+import { employeeSidebar } from "../../pages/employee/Dashboard.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -107,7 +107,7 @@ export const MyReferralForms = () => {
   // Drafts open in the builder; active forms open publicly.
   const openForm = (form) => {
     if (form.status === "active") {
-      navigate(`/employee/refer-job/submission?formId=${form._id}`);
+      navigate(`/employee/referral/form/submission?formId=${form._id}`);
       return;
     }
 
@@ -133,6 +133,12 @@ export const MyReferralForms = () => {
   };
 
   return (
+    <DashboardShell
+      role="employee"
+      roleLabel="Employee"
+      userName={localUser.name}
+      sidebar={employeeSidebar}
+      >
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -493,6 +499,7 @@ export const MyReferralForms = () => {
           )}
         </div>
       </div>
+      </DashboardShell>
   );
 };
 

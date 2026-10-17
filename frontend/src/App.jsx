@@ -24,6 +24,7 @@ import { CandidateReferrals } from "./pages/candidate/Referrals";
 import { CandidateSaved } from "./pages/candidate/Saved";
 import { CandidateNotifications } from "./pages/candidate/Notifications";
 import { CandidateSettings } from "./pages/candidate/Settings";
+import { CandidateProfilePublic } from "./pages/candidate/ProfilePublic";
 
 // Employee
 import { EmployeeDashboard } from "./pages/employee/Dashboard";
@@ -60,6 +61,7 @@ import { AdminReferrals } from "./pages/admin/Referrals";
 import "./App.css";
 import ApplyReferral from "./pages/public/ApplyReferral";
 import ReferralAnalytics from "./pages/employee/ReferralAnalytics";
+import { MyReferralForms } from "./components/referral/ReferralForms";
 
 function App() {
   return (
@@ -94,7 +96,8 @@ function App() {
         {/* Candidate */}
         <Route path="/candidate" element={<Navigate to="/candidate/dashboard" replace />} />
         <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
-        <Route path="/candidate/profile" element={<CandidateProfile />} />
+        <Route path="/candidate/profile/:id/private" element={<CandidateProfile />} />
+        <Route path="/candidate/profile/:id/public" element={<CandidateProfilePublic />} />
         <Route path="/candidate/jobs" element={<CandidateJobs />} />
         <Route path="/candidate/applications" element={<CandidateApplications />} />
         <Route path="/candidate/referrals" element={<CandidateReferrals />} />
@@ -116,7 +119,8 @@ function App() {
         <Route path ="/employee/profile" element={<EmployeeProfile/>} />
         <Route path ="/employee/refer-job" element={<ReferJob/>} />
         <Route path ="/employee/refer-job/create" element={<CreateReferral/>} />
-        <Route path ="/employee/refer-job/submission" element={<ReferralAnalytics/>} />
+        <Route path ="/employee/referral/forms" element={<MyReferralForms/>} />
+        <Route path ="/employee/referral/form/submission" element={<ReferralAnalytics/>} />
 
         {/* Company */}
         <Route path="/company" element={<Navigate to="/company/dashboard" replace />} />

@@ -58,7 +58,7 @@ export const submitReferralApplication = async (
       },
       body: JSON.stringify({
         answers,
-        name, email, phone, resumeUrl
+        name, email, phone, resumeUrl, userId
       }),
     }
   );
@@ -117,3 +117,15 @@ export const referCandidate = (submissionId) =>
     method: "POST",
     body: JSON.stringify({}),
   });
+
+export const getMostReferredCandidates = () =>
+  request("/referrals/submit/candidates/most-referred");
+
+export const getAvailableReferralForms = (userId, candidateId) =>
+  request(`/referrals/submit/referral-forms/available/${userId}/${candidateId}`);
+
+export const referCandidateToForm = (formId, candidateId) =>
+  request(
+    `/referrals/submit/referral-forms/${encodeURIComponent(formId)}/refer/${encodeURIComponent(candidateId)}`,
+    { method: "POST" }
+  );

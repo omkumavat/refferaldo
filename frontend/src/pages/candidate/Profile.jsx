@@ -90,7 +90,7 @@ export const CandidateProfile = () => {
     const fetchProfile = async () => {
       try {
         console.log(user)
-        const response = await getCandidateProfile(localUser?.id);
+        const response = await getCandidateProfile(localUser?.id,"private");
         console.log(response)
         if (response.success) {
           setProfile(response.profile);
