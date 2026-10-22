@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
   BriefcaseBusiness,
   MapPin,
@@ -7,9 +7,9 @@ import {
 
 
 export const JobDetailsForm = ({ job, setJob }) => {
-    const [localUser] = useState(
-        JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
-      )
+  const [localUser] = useState(
+    JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+  )
   const update = (field, value) => {
     setJob((prev) => ({
       ...prev,
@@ -18,9 +18,9 @@ export const JobDetailsForm = ({ job, setJob }) => {
   };
 
   const sanitizeSlug = (value) =>
-  value
-    .replace(/\s/g, "-")                 // each space -> "-"
-    .replace(/[^a-zA-Z0-9\-_/]/g, "");
+    value
+      .replace(/\s/g, "-")                 // each space -> "-"
+      .replace(/[^a-zA-Z0-9\-_/]/g, "");
 
   const addSkill = (e) => {
     if (e.key !== "Enter") return;
@@ -98,7 +98,34 @@ export const JobDetailsForm = ({ job, setJob }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="form-label">
-              Location
+              Department <span className="text-red-500">*</span>
+            </label>
+
+            <select
+              value={job.department}
+              onChange={(e) =>
+                update("department", e.target.value)
+              }
+              className="form-input"
+            >
+              <option value="Engineering & Technology">Engineering & Technology</option>
+              <option value="Product Management">Product Management</option>
+              <option value="Data Science & Analytics">Data Science & Analytics</option>
+              <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+              <option value="Design & User Experience (UI/UX)">Design & User Experience (UI/UX)</option>
+              <option value="Sales & Business Development">Sales & Business Development</option>
+              <option value="Marketing & Communications">Marketing & Communications</option>
+              <option value="Human Resources & Recruitment">Human Resources & Recruitment</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Operations & Administration">Operations & Administration</option>
+              <option value="Customer Support & Success">Customer Support & Success</option>
+              <option value="Other">Other</option>
+
+            </select>
+          </div >
+          <div>
+            <label className="form-label">
+              Location <span className="text-red-500">*</span>
             </label>
 
             <div className="relative">
@@ -133,10 +160,10 @@ export const JobDetailsForm = ({ job, setJob }) => {
               <option value="not-disclose">Not disclose</option>
             </select>
           </div>
-        </div>
+        </div >
 
         {/* Employment + Experience */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        < div className="grid grid-cols-1 md:grid-cols-2 gap-4" >
           <div>
             <label className="form-label">
               Employment type
@@ -186,10 +213,10 @@ export const JobDetailsForm = ({ job, setJob }) => {
               />
             </div>
           </div>
-        </div>
+        </div >
 
         {/* Skills */}
-        <div>
+        < div >
           <label className="form-label">
             Skills
           </label>
@@ -200,30 +227,32 @@ export const JobDetailsForm = ({ job, setJob }) => {
             className="form-input"
           />
 
-          {job.skills.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {job.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium"
-                >
-                  {skill}
-
-                  <button
-                    type="button"
-                    onClick={() => removeSkill(skill)}
-                    className="text-slate-400 hover:text-red-500"
+          {
+            job.skills.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {job.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium"
                   >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
+                    {skill}
+
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="text-slate-400 hover:text-red-500"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )
+          }
+        </div >
 
         {/* Salary */}
-        <div>
+        < div >
           <label className="form-label">
             Salary range
           </label>
@@ -259,10 +288,10 @@ export const JobDetailsForm = ({ job, setJob }) => {
               />
             </div>
           </div>
-        </div>
+        </div >
 
         {/* Deadline */}
-        <div>
+        < div >
           <label className="form-label">
             Application deadline
           </label>
@@ -278,7 +307,7 @@ export const JobDetailsForm = ({ job, setJob }) => {
             }
             className="form-input"
           />
-        </div>
+        </div >
 
         <div>
           <label className="form-label">
@@ -291,11 +320,16 @@ export const JobDetailsForm = ({ job, setJob }) => {
             placeholder="e.g. Frontend Developer"
             className="form-input"
           />
-          <p className="text-sm text-slate-500 mt-1">
-              Job Link : https://refer.com/referral/job/apply/{localUser?.id.slice(0,4)}-{job.slug}
-            </p>
+            {
+              job.slug && (
+                <p className="text-sm text-slate-500 mt-1">
+                Job Link : https://refer.com/referral/job/apply/{localUser?.id.slice(0, 4)}-{job.slug}
+                </p>
+              )
+            }
+          
         </div>
-      </div>
-    </section>
+      </div >
+    </section >
   );
 };

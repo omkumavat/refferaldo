@@ -20,11 +20,13 @@ export const createReferralFormService = async ({
     salaryMax,
     status,
     slug,
+    department,
     salaryCurrency,
     applicationDeadline,
     questions = [],
   } = data;
-
+  console.log(department);
+  
   const slugBase = title
     .toLowerCase()
     .trim()
@@ -35,15 +37,15 @@ export const createReferralFormService = async ({
     .toString(36)
     .substring(2, 8);
 
-    let slugs
-    if(slug === ""){
-      slugs = `${slugBase}-${randomPart}-${userId.toString().slice(0,4)}`;
-    }else{
-      slugs = `${userId.toString().slice(0,4)}-${slug}`;
-    }
+  let slugs
+  if (slug === "") {
+    slugs = `${userId.toString().slice(0, 4)}-${slugBase}-${randomPart}`;
+  } else {
+    slugs = `${userId.toString().slice(0, 4)}-${slug}`;
+  }
 
   const emp = await Employee.findOne({
-    user:userId
+    user: userId
   })
 
   const referralForm = await ReferralForm.create({
@@ -52,6 +54,7 @@ export const createReferralFormService = async ({
     title,
     description,
     location,
+    department,
 
     workMode: workMode || "onsite",
 
@@ -60,13 +63,13 @@ export const createReferralFormService = async ({
 
     experienceMin:
       experienceMin !== undefined &&
-      experienceMin !== ""
+        experienceMin !== ""
         ? Number(experienceMin)
         : 0,
 
     experienceMax:
       experienceMax !== undefined &&
-      experienceMax !== ""
+        experienceMax !== ""
         ? Number(experienceMax)
         : undefined,
 
@@ -74,13 +77,13 @@ export const createReferralFormService = async ({
 
     salaryMin:
       salaryMin !== undefined &&
-      salaryMin !== ""
+        salaryMin !== ""
         ? Number(salaryMin)
         : undefined,
 
     salaryMax:
       salaryMax !== undefined &&
-      salaryMax !== ""
+        salaryMax !== ""
         ? Number(salaryMax)
         : undefined,
 
@@ -90,7 +93,7 @@ export const createReferralFormService = async ({
     applicationDeadline:
       applicationDeadline || undefined,
 
-    slug:slugs,
+    slug: slugs,
     status,
   });
 

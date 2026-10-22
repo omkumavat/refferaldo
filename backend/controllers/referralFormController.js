@@ -1,5 +1,7 @@
 import ReferralForm from "../models/Referral.js";
 import ReferralQuestion from "../Models/ReferralQuestion.js";
+import CandidateProfile from "../models/CandidateProfile.js";
+import ReferralSubmission from "../Models/Application.js";
 
 import {
   createReferralFormService,
@@ -457,6 +459,105 @@ export const getPublicReferralForm = async (
       message:
         "Failed to load referral form",
       error: error.message,
+    });
+  }
+};
+
+import mongoose from "mongoose";
+const normalize = (value) =>
+  String(value || "").trim().toLowerCase();
+
+export const getCandidateReferralForms = async (req, res) => {
+  try {
+    const candidateId = req.params.userId
+
+    if (
+      !candidateId ||
+      !mongoose.Types.ObjectId.isValid(candidateId)
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Please log in to view referral forms.",
+      });
+    }
+
+    const now = new Date();
+
+    const [forms, profile, submissions] = await Promise.all([
+      ReferralForm.find({
+        status: "active",
+        $or: [
+          { applicationDeadline: null },
+          { applicationDeadline: { $exists: false } },
+          { applicationDeadline: { $gte: now } },
+        ],
+      })
+        .populate("company")
+        .sort({ createdAt: -1 })
+        .lean(),
+
+      CandidateProfile.findOne({
+        user: candidateId,
+      }).lean(),
+
+      ReferralSubmission.find({
+        candidate: candidateId,
+      })
+        .select("form status createdAt")
+        .lean(),
+    ]);
+
+    const submissionMap = new Map(
+      submissions.map((submission) => [
+        String(submission.form),
+        submission,
+      ])
+    );
+
+    // Adjust these fields if your CandidateProfile schema differs.
+    const candidateSkills = (
+      Array.isArray(profile?.skills) ? profile.skills : []
+    ).map(normalize);
+
+    const candidateSkillSet = new Set(candidateSkills);
+
+    const data = forms.map((form) => {
+      const requiredSkills = Array.isArray(form.skills)
+        ? form.skills
+        : [];
+
+      const matchedSkills = requiredSkills.filter((skill) =>
+        candidateSkillSet.has(normalize(skill))
+      );
+
+      const matchScore = requiredSkills.length
+        ? Math.round(
+            (matchedSkills.length / requiredSkills.length) * 100
+          )
+        : null;
+
+      const submission = submissionMap.get(String(form._id));
+
+      return {
+        ...form,
+        matchScore,
+        matchedSkills,
+        hasApplied: Boolean(submission),
+        submissionStatus: submission?.status || null,
+        submittedAt: submission?.createdAt || null,
+      };
+    });
+
+    return res.json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("getCandidateReferralForms:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch referral opportunities.",
     });
   }
 };

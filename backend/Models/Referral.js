@@ -34,6 +34,12 @@ const referralFormSchema = new mongoose.Schema(
       trim: true,
     },
 
+    department: {
+      type: String,
+      trim: true,
+      required: true
+    },
+
     /**
      * Public URL identifier.
      *
@@ -50,6 +56,7 @@ const referralFormSchema = new mongoose.Schema(
     location: {
       type: String,
       trim: true,
+      required:true
     },
 
     workMode: {

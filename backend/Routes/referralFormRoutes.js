@@ -8,9 +8,11 @@ import {
     publishReferralForm,
     updateReferralStatus,
     getPublicReferralForm,
+    getCandidateReferralForms
 } from "../controllers/referralFormController.js";
 
 import { authMiddleware } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
@@ -24,6 +26,13 @@ router.get(
     "/my/:id",
     // authMiddleware,
     getMyReferralForms
+);
+
+router.get(
+  "/candidate/forms/available/:userId",
+  authMiddleware,
+  requireRole("candidate"),
+  getCandidateReferralForms
 );
 
 router.get(

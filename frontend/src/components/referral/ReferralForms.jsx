@@ -392,7 +392,7 @@ export const MyReferralForms = () => {
                               {form.status === "active" ? (
                                 <>
                                   <ExternalLink className="w-3.5 h-3.5" />
-                                  Open form
+                                  Open Analytics
                                 </>
                               ) : (
                                 <>

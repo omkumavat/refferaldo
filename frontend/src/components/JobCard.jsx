@@ -6,9 +6,11 @@ import {
   Clock,
   IndianRupee,
   ExternalLink,
+  CheckCircle2
 } from "lucide-react";
 import { CompanyLogo } from "./CompanyLogo";
 import { VerificationBadge } from "./Badges";
+
 
 const getLocation = (job) => {
   // Greenhouse / generic API
@@ -59,9 +61,9 @@ const getLocation = (job) => {
           typeof location === "string"
             ? location
             : location?.name ||
-              location?.city ||
-              location?.location ||
-              ""
+            location?.city ||
+            location?.location ||
+            ""
         )
         .filter(Boolean)
         .join(", ");
@@ -76,8 +78,7 @@ const getDepartment = (job) => {
     job.department ||
     job.category ||
     job.team ||
-    job.businessUnit ||
-    "General"
+    job.businessUnit
   );
 };
 
@@ -107,7 +108,10 @@ export const JobCard = ({
   ctaLabel = "Request Referral",
   ctaTo,
   compact = false,
+  applied = false,
+  matchScore = null,
 }) => {
+  console.log(job)
   const location = getLocation(job);
   const department = getDepartment(job);
   const experience = getExperience(job);
@@ -148,7 +152,7 @@ export const JobCard = ({
                     "Company"}
                 </span>
 
-                {company?.verified && (
+                {company?.verificationStatus === "success" && (
                   <VerificationBadge label="Verified" />
                 )}
               </div>
@@ -157,10 +161,14 @@ export const JobCard = ({
 
           {/* Job details */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-[13px] text-slate-500">
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" />
-              {location}
-            </span>
+            {
+              location && (
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                  {location}
+                </span>
+              )
+            }
 
             {department && (
               <span className="inline-flex items-center gap-1.5">
@@ -197,23 +205,47 @@ export const JobCard = ({
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Clock className="w-3.5 h-3.5" />
+      {/* Footer */}
+      <div className="mt-4 border-t border-slate-100 pt-4">
+        {matchScore != null && (
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-xs text-slate-500">
+              Skill match
+            </span>
 
-          {job.postedAgo ||
-            job.postedDate ||
-            job.updatedAt ||
-            "Recently posted"}
+            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+              {matchScore}% match
+            </span>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <Clock className="h-3.5 w-3.5" />
+            {job.postedAgo ||
+              job.postedDate ||
+              job.createdAt ||
+              "Recently posted"}
+          </div>
+
+          {applied ? (
+            <button
+              type="button"
+              disabled
+              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-500"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Already Applied
+            </button>
+          ) : (
+            <Link
+              to={ctaTo || "/employee/candidates"}
+              className="btn-primary shrink-0 px-3 py-2 text-xs"
+            >
+              {ctaLabel}
+            </Link>
+          )}
         </div>
-
-        <Link
-          to={ctaTo || "/employee/candidates"}
-          className="btn-primary text-xs py-2 px-3"
-          data-testid={`job-referral-cta-${job.id || job._id}`}
-        >
-          {ctaLabel}
-        </Link>
       </div>
     </div>
   );

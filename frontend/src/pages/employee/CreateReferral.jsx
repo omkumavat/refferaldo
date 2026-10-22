@@ -31,6 +31,7 @@ const EMPTY_JOB = {
     applicationDeadline: "",
     slug: "",
     status: "",
+    department: "Engineering & Technology"
 };
 
 const DEFAULT_QUESTIONS = () => [
@@ -146,8 +147,6 @@ export const CreateReferral = () => {
             }
 
             const loaded = res.job;
-            console.log(loaded);
-            
 
             setJob({
                 ...EMPTY_JOB,
@@ -192,10 +191,15 @@ export const CreateReferral = () => {
             return;
         }
 
-        if (stat === "active" && !job.slug.trim()) {
-            alert("Please enter a slug for the public link");
+        if (!job.location.trim()) {
+            alert("Please enter a job location");
             return;
         }
+
+        // if (stat === "active" && !job.slug.trim()) {
+        //     alert("Please enter a slug for the public link");
+        //     return;
+        // }
 
         try {
             setSubmitting(true);
@@ -213,6 +217,7 @@ export const CreateReferral = () => {
                 salaryMax: job.salaryMax,
                 slug: job.slug,
                 status: stat,
+                department: job.department,
                 applicationDeadline: job.applicationDeadline || null,
                 questions: questions.map((question, index) => ({
                     question: question.question,
@@ -223,7 +228,8 @@ export const CreateReferral = () => {
                     order: index,
                 })),
             };
-
+            console.log(payload);
+            
             let formId;
 
             if (isEdit) {
@@ -274,7 +280,7 @@ export const CreateReferral = () => {
             }
 
             setJob((prev) => ({ ...prev, status: "active" }));
-            setPublicLink(buildPublicLink(job.slug));
+            setPublicLink(buildPublicLink(publishResult.data.slug));
             setPublished(true);
         } catch (error) {
             console.error(error);

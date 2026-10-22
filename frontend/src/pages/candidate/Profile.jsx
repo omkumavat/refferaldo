@@ -268,7 +268,9 @@ const handleAdd = async (type, data) => {
           </div>
 
           <div className="flex gap-2 shrink-0">
-            <button className="btn-secondary text-xs">Preview</button>
+            <button className="btn-secondary text-xs"
+            onClick={() => {window.open(`/candidate/profile/${localUser?.id}/public`, "_blank")}}
+            >Preview</button>
             <button
               className="btn-primary text-xs"
               data-testid="edit-profile-btn"

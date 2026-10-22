@@ -83,7 +83,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
             {sidebar.map((item) => {
               const Icon = item.icon;
               const linkTo = item.requiresId
-                ? `${item.to}/${localUser?.id.slice(0,4)}-${localUser?.id.slice(4,9)}/private`
+                ? `${item.to}/${localUser?.id?.slice(0,4)}-${localUser?.id?.slice(4,9)}/private`
                 : item.to;
               return (
                 <NavLink

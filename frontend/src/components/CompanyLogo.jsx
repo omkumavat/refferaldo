@@ -14,7 +14,7 @@ export const CompanyLogo = ({ company, size = 44, className = "" }) => {
       aria-label={`${company.name} logo`}
       data-testid={`company-logo-${company.id}`}
     >
-      {company.symbol}
+      {company.symbol || company.name.slice(0,1)}
     </div>
   );
 };

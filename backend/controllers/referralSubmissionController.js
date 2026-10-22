@@ -25,8 +25,19 @@ export const submitReferral = async (
       resumeUrl,
       answers = [],
     } = req.body;
-    // console.log(answers);
 
+    const candidate = await User.findOne({
+      _id: userId,
+      role: "candidate",
+      isActive: { $ne: false },
+    }).select("name email phone");
+
+    if (!candidate) {
+      return res.status(404).json({
+        success: false,
+        message: "Candidate not found or inactive",
+      });
+    }
 
     const form =
       await ReferralForm.findOne({
@@ -371,7 +382,7 @@ export const getAvailableReferralForms = async (req, res) => {
     const submissions = await ReferralSubmission.find({
       form: { $in: forms.map((f) => f._id) },
       candidate: req.params.candidateId,
-      status:"referred",
+      status: "referred",
     }).lean();
 
     const submissionMap = submissions.map((sub) => ({

@@ -70,7 +70,7 @@ export const FormPreview = ({
               </div>
 
               <h2 className="text-xl font-bold text-slate-900">
-                {job.company?.name || "Your job title"}
+                {job.company?.name || "Your Company Name"}
               </h2>
             </div>
             <h2 className="text-xl font-bold text-slate-900">
