@@ -47,19 +47,13 @@ export const getPublicReferralForm = async (slug) => {
 // Submit an application for the referral
 export const submitReferralApplication = async (
   slug,
-  answers, userId, name, email, phone, resumeUrl
+  formData
 ) => {
   const response = await fetch(
     `${API_BASE_URL}/referrals/submit/${slug}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        answers,
-        name, email, phone, resumeUrl, userId
-      }),
+      body: formData,
     }
   );
 

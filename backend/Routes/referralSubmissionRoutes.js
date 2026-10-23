@@ -9,11 +9,13 @@ import {
   getAvailableReferralForms,
   referCandidateToForm,
 } from "../controllers/referralSubmissionController.js";
+import {uploadReferralFiles} from '../middleware/referralFiles.js';
 
 const router = express.Router();
 
 router.post(
   "/:slug",
+  uploadReferralFiles,
   submitReferral
 );
 

@@ -27,9 +27,9 @@ const ApplyReferral = () => {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-   const [localUser] = useState(
-          JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
-      );
+  const [localUser] = useState(
+    JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -49,8 +49,8 @@ const ApplyReferral = () => {
         }
 
         console.log(result);
-        
-        
+
+
         if (cancelled) return;
 
         setJob(result.form);
@@ -80,16 +80,20 @@ const ApplyReferral = () => {
     }));
   };
 
+
   const handleSubmit = async () => {
     setError("");
 
+    // Validate required questions using your existing answers state.
     const missingQuestion = questions.find((question) => {
       if (!question.required) return false;
 
-      const id = question._id || question.id;
+      const id = String(question._id || question.id);
       const answer = answers[id];
 
-      if (answer instanceof File) return false;
+      if (question.type === "file") {
+        return !(answer instanceof File);
+      }
 
       return (
         answer == null ||
@@ -105,34 +109,55 @@ const ApplyReferral = () => {
       return;
     }
 
-    setError("");
-
     try {
       setSubmitting(true);
 
-      const formattedAnswers = questions.map((question) => ({
-        questionId: question._id || question.id,
-        question: question.question,
-        type: question.type,
-        answer: answers[question._id || question.id] ?? "",
-      }));
+      const formData = new FormData();
+      const formattedAnswers = [];
 
-      console.log(formattedAnswers);
-      
+      // Applicant details expected by the backend.
+      formData.append("userId", localUser?.id || "");
+      formData.append("name", localUser?.name || "");
+      formData.append("email", localUser?.email || "");
+      formData.append("phone", localUser?.phone || "");
 
-      await submitReferralApplication(
-        slug,
-        formattedAnswers,
-        localUser?.id || "",
-        localUser?.name || "",
-        localUser?.email || "",
-        localUser?.phone || "",
-        localUser?.resumeUrl || ""
+      for (const question of questions) {
+        const questionId = String(question._id || question.id);
+        const value = answers[questionId];
+
+        if (question.type === "file") {
+          if (value instanceof File) {
+            // Field name MUST be the question ID.
+            formData.append(questionId, value);
+          }
+
+          // The backend will replace this answer with the saved file URL.
+          continue;
+        }
+
+        formattedAnswers.push({
+          questionId,
+          answer: value ?? "",
+        });
+      }
+
+      formData.append(
+        "answers",
+        JSON.stringify(formattedAnswers)
       );
+
+      
+      await submitReferralApplication(slug, formData);
 
       setShowSuccess(true);
     } catch (err) {
+      console.error(
+        "Referral submission failed:",
+        err.response?.data || err
+      );
+
       setError(
+        err.response?.data?.message ||
         "Application submission failed. Please try again."
       );
     } finally {

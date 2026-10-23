@@ -10,10 +10,16 @@ import {
 } from "../services/referralMatchingService.js";
 
 
-export const submitReferral = async (
-  req,
-  res
-) => {
+
+
+import fs from "fs/promises";
+
+
+import { saveDocuments } from "../services/saveDocuments.js";
+
+export const submitReferral = async (req, res) => {
+  let savedFiles = [];
+
   try {
     const { slug } = req.params;
 
@@ -22,10 +28,32 @@ export const submitReferral = async (
       name,
       email,
       phone,
-      resumeUrl,
-      answers = [],
     } = req.body;
 
+    console.log(req.body)
+
+    // Multipart requests may send answers as a JSON string.
+    let answers = req.body.answers || [];
+
+    if (typeof answers === "string") {
+      try {
+        answers = JSON.parse(answers);
+      } catch {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid answers format",
+        });
+      }
+    }
+
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({
+        success: false,
+        message: "Answers must be an array",
+      });
+    }
+
+    // 1. Validate candidate
     const candidate = await User.findOne({
       _id: userId,
       role: "candidate",
@@ -39,11 +67,11 @@ export const submitReferral = async (
       });
     }
 
-    const form =
-      await ReferralForm.findOne({
-        slug,
-        status: "active",
-      });
+    // 2. Find active referral form
+    const form = await ReferralForm.findOne({
+      slug,
+      status: "active",
+    });
 
     if (!form) {
       return res.status(404).json({
@@ -53,18 +81,18 @@ export const submitReferral = async (
       });
     }
 
+    // 3. Check application deadline
     if (
       form.applicationDeadline &&
-      new Date() >
-      new Date(form.applicationDeadline)
+      new Date() > new Date(form.applicationDeadline)
     ) {
       return res.status(400).json({
         success: false,
-        message:
-          "Application deadline has passed",
+        message: "Application deadline has passed",
       });
     }
 
+    // 4. Validate applicant details
     if (!name?.trim()) {
       return res.status(400).json({
         success: false,
@@ -79,12 +107,14 @@ export const submitReferral = async (
       });
     }
 
+    // 5. Check duplicate submissions
+    const normalizedEmail = email.trim().toLowerCase();
+
     if (!form.allowMultipleSubmissions) {
-      const existing =
-        await ReferralSubmission.findOne({
-          form: form._id,
-          email: email.toLowerCase().trim(),
-        });
+      const existing = await ReferralSubmission.findOne({
+        form: form._id,
+        email: normalizedEmail,
+      });
 
       if (existing) {
         return res.status(409).json({
@@ -95,40 +125,80 @@ export const submitReferral = async (
       }
     }
 
-    const questions =
-      await ReferralQuestion.find({
-        form: form._id,
-      }).lean();
+    // 6. Fetch questions belonging to this form
+    const questions = await ReferralQuestion.find({
+      form: form._id,
+    }).lean();
 
+    const questionMap = new Map(
+      questions.map((question) => [
+        question._id.toString(),
+        question,
+      ])
+    );
+
+    // 7. Validate submitted answers and question IDs
     const answerMap = new Map();
 
-    answers.forEach((answer) => {
-      if (answer.question) {
-        answerMap.set(
-          String(answer.questionId),
-          answer.answer
-        );
+    for (const answer of answers) {
+      const questionId = String(answer.questionId || "");
+
+      if (!questionMap.has(questionId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid question ID in submitted answers",
+        });
       }
-    });
 
-    // Check required questions
+      if (answerMap.has(questionId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Duplicate answers for a question are not allowed",
+        });
+      }
+
+      answerMap.set(questionId, answer.answer);
+    }
+
+    // 8. Associate uploaded files with their question IDs.
+    // The frontend must use the question ID as the multipart field name.
+    const uploadedFiles = req.files || [];
+    const filesByQuestion = new Map();
+
+    for (const file of uploadedFiles) {
+      const questionId = String(file.fieldname);
+
+      const question = questionMap.get(questionId);
+
+      if (!question || question.type !== "file") {
+        return res.status(400).json({
+          success: false,
+          message: "File uploaded for an invalid file question",
+        });
+      }
+
+      if (!filesByQuestion.has(questionId)) {
+        filesByQuestion.set(questionId, []);
+      }
+
+      filesByQuestion.get(questionId).push(file);
+    }
+
+    // 9. Validate required questions, including file questions.
     for (const question of questions) {
-      console.log(question);
-
       if (!question.required) continue;
 
-      const value = answerMap.get(
-        question._id.toString()
-      );
+      const questionId = question._id.toString();
+      const value = answerMap.get(questionId);
+      const questionFiles = filesByQuestion.get(questionId) || [];
 
       const isEmpty =
         value === undefined ||
         value === null ||
         value === "" ||
-        (Array.isArray(value) &&
-          value.length === 0);
+        (Array.isArray(value) && value.length === 0);
 
-      if (isEmpty) {
+      if (isEmpty && questionFiles.length === 0) {
         return res.status(400).json({
           success: false,
           message: `Please answer: ${question.question}`,
@@ -136,73 +206,96 @@ export const submitReferral = async (
       }
     }
 
-    const submission =
-      await ReferralSubmission.create({
-        form: form._id,
+    // 10. Save all uploaded files in the directory for this form.
+    // Example: public/uploads/FORM_ID/QUESTION_ID.pdf
+    const documents = uploadedFiles.map((file) => ({
+      id: file.fieldname,
+      file,
+    }));
 
-        candidate:
-          userId || null,
+    if (documents.length > 0) {
+      savedFiles = await saveDocuments(form._id.toString(), documents);
+    }
 
-        name: name.trim(),
-
-        email: email
-          .trim()
-          .toLowerCase(),
-
-        phone:
-          phone?.trim() || undefined,
-
-        resumeUrl:
-          resumeUrl?.trim() || undefined,
-
-        answers: answers.map(
-          (answer) => ({
-            question: answer.questionId,
-            value: answer.answer,
-          })
-        ),
-      });
-
-    await ReferralForm.updateOne(
-      {
-        _id: form._id,
-      },
-      {
-        $inc: {
-          submissions: 1,
-        },
-      }
+    // 11. Map question IDs to their saved public URLs.
+    const fileUrls = new Map(
+      savedFiles.map((file) => [
+        String(file.id),
+        file.url,
+      ])
     );
 
+    // 12. Build final answers.
+    // File answers contain their saved URL instead of the File object.
+    const finalAnswers = questions
+      .filter((question) => answerMap.has(question._id.toString()) ||
+        fileUrls.has(question._id.toString()))
+      .map((question) => {
+        const questionId = question._id.toString();
+
+        return {
+          question: question._id,
+          value: fileUrls.has(questionId)
+            ? fileUrls.get(questionId)
+            : answerMap.get(questionId),
+        };
+      });
+
+    // 13. Create the referral submission.
+    const submission = await ReferralSubmission.create({
+      form: form._id,
+      candidate: candidate._id,
+      name: name.trim(),
+      email: normalizedEmail,
+      phone: phone?.trim() || undefined,
+      answers: finalAnswers,
+    });
+
+    // 14. Increment submission count.
+    await ReferralForm.updateOne(
+      { _id: form._id },
+      { $inc: { submissions: 1 } }
+    );
+
+    // 15. Calculate referral matching.
     await calculateReferralMatch({
       form,
       submission,
     });
+
+    // 16. Remove temporary Multer files after successful processing.
+    await Promise.allSettled(
+      uploadedFiles.map((file) => fs.unlink(file.path))
+    );
 
     return res.status(201).json({
       success: true,
       message:
         form.thankYouMessage ||
         "Application submitted successfully.",
-
       data: {
         id: submission._id,
       },
     });
   } catch (error) {
-    console.error(
-      "submitReferral:",
-      error
+    console.error("submitReferral:", error);
+
+    // Remove temporary uploads if processing fails.
+    await Promise.allSettled(
+      (req.files || []).map((file) =>
+        fs.unlink(file.path)
+      )
     );
 
     return res.status(500).json({
       success: false,
-      message:
-        "Failed to submit application",
+      message: "Failed to submit application",
       error: error.message,
     });
   }
 };
+
+
 
 export const updateSubmissionStatus = async (req, res) => {
   try {
