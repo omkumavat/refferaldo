@@ -10,7 +10,7 @@ export const Thankyou = () => {
               <div className="relative p-12 h-full flex flex-col justify-between text-white">
                 <Link to="/" className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center"><Sparkles className="w-4 h-4" /></div>
-                  <span className="text-lg font-bold">Referly</span>
+                  <span className="text-lg font-bold">refermy.life</span>
                 </Link>
                 <div>
                   <p className="text-2xl font-semibold leading-snug max-w-md">"I found an employee at the company and got my profile referred within a day."</p>
@@ -30,7 +30,7 @@ export const Thankyou = () => {
                 </h1>
     
                 <p className="text-slate-500 mt-3 leading-relaxed">
-                  Your Referly account has been created successfully.
+                  Your refermy.life account has been created successfully.
                   We just need to verify your email address before you can
                   continue.
                 </p>
@@ -50,7 +50,7 @@ export const Thankyou = () => {
                       <p className="text-sm text-slate-600 leading-relaxed">
                         Check your inbox for an email from{" "}
                         <span className="font-semibold text-slate-800">
-                          Referly
+                          refermy.life
                         </span>
                         .
                       </p>
@@ -77,7 +77,7 @@ export const Thankyou = () => {
     
                       <p className="text-sm text-slate-600 leading-relaxed">
                         Once verified, your account will be activated and
-                        you can continue to your Referly dashboard.
+                        you can continue to your refermy.life dashboard.
                       </p>
                     </div>
     

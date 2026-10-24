@@ -293,7 +293,7 @@ export const CandidateReferModal = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-7">
+        <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-5 py-4 sm:px-7">
           <p className="text-xs text-slate-500">
             {forms.length} active {forms.length === 1 ? "form" : "forms"}
           </p>

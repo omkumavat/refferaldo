@@ -8,7 +8,7 @@ import { getEmployeeById } from "../../data/employees";
 import { StatusBadge } from "../../components/Badges";
 
 export const AdminReferrals = () => (
-  <DashboardShell role="admin" roleLabel="Referly Admin" sidebar={adminSidebar}>
+  <DashboardShell role="admin" roleLabel="refermy.life Admin" sidebar={adminSidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Referral monitoring</h1>
     <p className="text-slate-600 mt-1 mb-6">Every referral submitted on the platform.</p>
     <div className="card overflow-x-auto">

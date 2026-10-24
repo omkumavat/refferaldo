@@ -7,7 +7,7 @@ import { CheckCircle2, Info } from "lucide-react";
 export const CandidateNotifications = () => (
   <DashboardShell role="candidate" roleLabel="Candidate" sidebar={candidateSidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Notifications</h1>
-    <p className="text-slate-600 mt-1 mb-6">Everything happening on your Referly account.</p>
+    <p className="text-slate-600 mt-1 mb-6">Everything happening on your refermy.life account.</p>
     <div className="card divide-hair">
       {notifications.map((n) => (
         <div key={n.id} className={`p-5 flex gap-4 ${!n.read && "bg-emerald-50/30"}`} data-testid={`notif-${n.id}`}>

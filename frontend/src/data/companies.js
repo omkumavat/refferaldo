@@ -1,9 +1,9 @@
-// Mock companies for Referly
+// Mock companies for refermy.life
 export const companies = [
   {
     id: "stripe",
     name: "Stripe",
-    symbol: "S",
+    symbol: "/images/stripe_home.png",
     tint: "bg-indigo-50 text-indigo-700 border-indigo-200",
     website: "stripe.com",
     industry: "Payments Infrastructure",
@@ -21,7 +21,7 @@ export const companies = [
   {
     id: "vercel",
     name: "Vercel",
-    symbol: "▲",
+    symbol: "/images/vercel_home.png",
     tint: "bg-slate-100 text-slate-900 border-slate-300",
     website: "vercel.com",
     industry: "Developer Tools",
@@ -37,9 +37,9 @@ export const companies = [
     perks: ["Fully remote", "Unlimited PTO", "MacBook Pro", "Home office budget"],
   },
   {
-    id: "linear",
-    name: "Linear",
-    symbol: "L",
+    id: "google",
+    name: "Google",
+    symbol: "/images/google_home.png",
     tint: "bg-violet-50 text-violet-700 border-violet-200",
     website: "linear.app",
     industry: "SaaS · Project Management",
@@ -55,9 +55,9 @@ export const companies = [
     perks: ["Fully remote", "Async-first", "Craft-focused culture", "Yearly offsites"],
   },
   {
-    id: "figma",
-    name: "Figma",
-    symbol: "F",
+    id: "microsoft",
+    name: "Microsoft",
+    symbol: "/images/microsoft_home.png",
     tint: "bg-rose-50 text-rose-700 border-rose-200",
     website: "figma.com",
     industry: "Design Software",
@@ -73,9 +73,9 @@ export const companies = [
     perks: ["Hybrid", "Wellness credit", "Learning budget", "Parental leave"],
   },
   {
-    id: "datadog",
-    name: "Datadog",
-    symbol: "DD",
+    id: "zoho",
+    name: "Zoho",
+    symbol: "/images/zoho_home.png",
     tint: "bg-purple-50 text-purple-700 border-purple-200",
     website: "datadoghq.com",
     industry: "Observability",
@@ -93,7 +93,7 @@ export const companies = [
   {
     id: "coinbase",
     name: "Coinbase",
-    symbol: "C",
+    symbol: "/images/coinbase_home.png",
     tint: "bg-blue-50 text-blue-700 border-blue-200",
     website: "coinbase.com",
     industry: "Crypto Exchange",
@@ -111,7 +111,7 @@ export const companies = [
   {
     id: "razorpay",
     name: "Razorpay",
-    symbol: "R",
+    symbol: "/images/razorpay_home.png",
     tint: "bg-sky-50 text-sky-700 border-sky-200",
     website: "razorpay.com",
     industry: "Fintech",
@@ -127,9 +127,9 @@ export const companies = [
     perks: ["Hybrid", "ESOPs", "Health cover", "Learning wallet"],
   },
   {
-    id: "zoho",
-    name: "Zoho",
-    symbol: "Z",
+    id: "mastercard",
+    name: "Mastercard",
+    symbol: "/images/mastercard_home.png",
     tint: "bg-red-50 text-red-700 border-red-200",
     website: "zoho.com",
     industry: "SaaS Suite",

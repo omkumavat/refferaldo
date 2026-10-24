@@ -210,7 +210,7 @@ const ApplyReferral = () => {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
               <BriefcaseBusiness size={19} />
             </span>
-            Referly
+            refermy.life
           </Link>
 
           <Link

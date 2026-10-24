@@ -6,9 +6,9 @@ export const HowItWorks = () => (
   <div className="min-h-screen bg-white">
     <PublicNav />
     <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <p className="eyebrow">How Referly works</p>
+      <p className="eyebrow">How refermy.life works</p>
       <h1 className="text-4xl font-bold tracking-tight text-slate-900 mt-2">The referral marketplace, explained.</h1>
-      <p className="text-slate-600 mt-3 text-lg leading-relaxed">Referrals are the fastest path to a job — and the least accessible. Referly changes that by making it easy for candidates to reach verified employees at companies they love.</p>
+      <p className="text-slate-600 mt-3 text-lg leading-relaxed">Referrals are the fastest path to a job — and the least accessible. refermy.life changes that by making it easy for candidates to reach verified employees at companies they love.</p>
 
       <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5">
         {[
@@ -25,7 +25,7 @@ export const HowItWorks = () => (
       </div>
 
       <div className="mt-16">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Why Referly is different</h2>
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Why refermy.life is different</h2>
         <div className="mt-6 space-y-4">
           {[
             { i: ShieldCheck, t: "Every referrer is verified", d: "We verify employment via corporate email OTP before anyone can refer. No fakes, no scams." },

@@ -50,6 +50,11 @@ const referralSubmissionSchema = new mongoose.Schema(
       },
     ],
 
+    submittedThroughForm:{
+      type:Boolean,
+      required:true
+    },
+
     status: {
       type: String,
       enum: [

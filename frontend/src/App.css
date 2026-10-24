@@ -1,38 +1,85 @@
-/* Referly – app-level styles handled via Tailwind and index.css */
+
+/* refermy.life — application-level styles */
+
 .App {
-    min-height: 100vh;
-    background: #fafafa;
+  min-height: 100vh;
+  color: var(--text-primary, #f5f1ff);
 }
 
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Consistent application shell */
+.app-shell {
+  min-height: 100vh;
+  background: var(--bg-base, #0b0912);
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Optional ambient glow for hero sections */
+.hero-glow {
+  position: relative;
+  isolation: isolate;
 }
 
-.App-link {
-    color: #61dafb;
+.hero-glow::before {
+  position: absolute;
+  z-index: -1;
+  inset: -20% -10%;
+  content: "";
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(139 92 246 / 14%),
+    transparent 65%
+  );
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Optional premium navigation styling */
+.app-nav {
+  background: rgb(11 9 18 / 85%);
+  border-bottom: 1px solid rgb(167 139 250 / 12%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
+/* Optional interactive job and referral cards */
+.opportunity-card {
+  background: linear-gradient(145deg, #191326, #110d19);
+  border: 1px solid #302640;
+  border-radius: 14px;
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
 
+.opportunity-card:hover {
+  transform: translateY(-3px);
+  border-color: #6d5292;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 25%),
+    0 0 24px rgb(139 92 246 / 8%);
+}
+
+/* Optional custom page entrance */
+.page-enter {
+  animation: page-enter 280ms ease-out both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+
+  .opportunity-card {
+    transition: none;
+  }
+}

@@ -28,7 +28,7 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
           </div>
 
           <span className="text-lg font-bold">
-            Referly
+            refermy.life
           </span>
         </Link>
 
@@ -56,7 +56,7 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
           </div>
 
           <span className="text-lg font-bold text-slate-900">
-            Referly
+            refermy.life
           </span>
         </Link>
 
@@ -267,7 +267,7 @@ export const Login = () => {
       subtitle="Sign in to continue your referral journey."
       footer={
         <>
-          New to Referly?{" "}
+          New to refermy.life?{" "}
           <Link
             to="/signup"
             className="font-semibold text-emerald-700"
@@ -278,7 +278,7 @@ export const Login = () => {
       }
     >
       {/* Social Login */}
-      <div className="space-y-3">
+      {/* <div className="space-y-3">
         <button
           type="button"
           className="btn-secondary w-full justify-center"
@@ -326,7 +326,7 @@ export const Login = () => {
 
           Continue with Microsoft
         </button>
-      </div>
+      </div> */}
 
       {/* Divider */}
       <div className="my-5 flex items-center gap-3 text-xs text-slate-400">

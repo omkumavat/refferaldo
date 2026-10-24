@@ -319,7 +319,7 @@ export const MyReferralForms = () => {
                     {filteredForms.map((form) => (
                       <tr
                         key={form._id}
-                        className="hover:bg-slate-50/70 transition-colors"
+                        className=" transition-colors"
                       >
                         <td className="px-5 py-4">
                           <button
@@ -491,7 +491,7 @@ export const MyReferralForms = () => {
           )}
 
           {!loading && !error && filteredForms.length > 0 && (
-            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50">
+            <div className="px-5 py-3 border-t border-slate-100">
               <p className="text-xs text-slate-500">
                 Showing {filteredForms.length} of {forms.length} referral forms
               </p>

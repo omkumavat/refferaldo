@@ -153,7 +153,7 @@ export const CandidateProfilePublic = () => {
 
     return (
         // 
-        <div className="min-h-screen bg-slate-50/80 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+        <div className="min-h-screen px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
             {/* HEADER */}
             <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
                 <div className="flex items-start gap-5 flex-col sm:flex-row">

@@ -60,7 +60,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
   const user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}");
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-40 w-64 flex-shrink-0 border-r border-slate-200 bg-white transform transition-transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
@@ -70,7 +70,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
             <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>
-            <span className="text-[17px] font-bold tracking-tight text-slate-900">Referly</span>
+            <span className="text-[17px] font-bold tracking-tight text-slate-900">refermy.life</span>
           </Link>
           <button className="lg:hidden p-1.5 rounded text-slate-500 hover:bg-slate-100" onClick={() => setSidebarOpen(false)}>
             <X className="w-4 h-4" />
@@ -134,7 +134,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-16 sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between">
+        <header className="h-16 sticky top-0 z-30 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1 max-w-xl">
             <button className="lg:hidden p-2 rounded text-slate-500 hover:bg-slate-100" onClick={() => setSidebarOpen(true)} data-testid="open-sidebar">
               <Menu className="w-5 h-5" />

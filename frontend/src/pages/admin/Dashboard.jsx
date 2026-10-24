@@ -18,9 +18,9 @@ const sidebar = [
 export const adminSidebar = sidebar;
 
 export const AdminDashboard = () => (
-  <DashboardShell role="admin" roleLabel="Referly Admin" userName="Admin" sidebar={sidebar}>
+  <DashboardShell role="admin" roleLabel="refermy.life Admin" userName="Admin" sidebar={sidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Platform overview</h1>
-    <p className="text-slate-600 mt-1 mb-6">Trust & safety across the Referly network.</p>
+    <p className="text-slate-600 mt-1 mb-6">Trust & safety across the refermy.life network.</p>
     <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
       <StatCard label="Users" value="12,842" icon={Users} />
       <StatCard label="Companies" value="284" icon={Building2} />

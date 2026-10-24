@@ -160,8 +160,6 @@ export const submitReferral = async (req, res) => {
       answerMap.set(questionId, answer.answer);
     }
 
-    // 8. Associate uploaded files with their question IDs.
-    // The frontend must use the question ID as the multipart field name.
     const uploadedFiles = req.files || [];
     const filesByQuestion = new Map();
 
@@ -206,8 +204,6 @@ export const submitReferral = async (req, res) => {
       }
     }
 
-    // 10. Save all uploaded files in the directory for this form.
-    // Example: public/uploads/FORM_ID/QUESTION_ID.pdf
     const documents = uploadedFiles.map((file) => ({
       id: file.fieldname,
       file,
@@ -249,6 +245,7 @@ export const submitReferral = async (req, res) => {
       email: normalizedEmail,
       phone: phone?.trim() || undefined,
       answers: finalAnswers,
+      submittedThroughForm:true
     });
 
     // 14. Increment submission count.
@@ -577,6 +574,7 @@ export const referCandidateToForm = async (req, res) => {
       phone: candidate.phone || "",
       answers: [],
       status: "referred",
+      submittedThroughForm:false
     });
 
     await ReferralForm.updateOne(
@@ -679,6 +677,7 @@ export const getFormSubmissions = async (req, res) => {
       ReferralSubmission.find(filter)
         .populate("candidate", "name email avatar")
         .populate("form", "title")
+        .populate("answers.question")
         .sort(sortOption)
         .skip((pageNumber - 1) * pageSize)
         .limit(pageSize)

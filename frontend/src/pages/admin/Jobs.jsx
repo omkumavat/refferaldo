@@ -6,7 +6,7 @@ import { getCompanyById } from "../../data/companies";
 import { CompanyLogo } from "../../components/CompanyLogo";
 
 export const AdminJobs = () => (
-  <DashboardShell role="admin" roleLabel="Referly Admin" sidebar={adminSidebar}>
+  <DashboardShell role="admin" roleLabel="refermy.life Admin" sidebar={adminSidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Job moderation</h1>
     <p className="text-slate-600 mt-1 mb-6">Monitor all jobs and take action on reported ones.</p>
     <div className="card overflow-x-auto">

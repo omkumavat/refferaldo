@@ -5,7 +5,7 @@ import { employees } from "../../data/employees";
 import { VerificationBadge } from "../../components/Badges";
 
 export const AdminEmployees = () => (
-  <DashboardShell role="admin" roleLabel="Referly Admin" sidebar={adminSidebar}>
+  <DashboardShell role="admin" roleLabel="refermy.life Admin" sidebar={adminSidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Employee verifications</h1>
     <p className="text-slate-600 mt-1 mb-6">Verify company email OTPs and approve referrer status.</p>
     <div className="card overflow-x-auto">

@@ -106,7 +106,7 @@ const ResumeOnboarding = () => {
                         </div>
 
                         <span className="text-xl font-bold text-slate-900">
-                            Referly
+                            refermy.life
                         </span>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ const ResumeOnboarding = () => {
                         <p className="mt-3 text-sm sm:text-base text-slate-500 max-w-xl mx-auto leading-relaxed">
                             Upload your resume and we'll automatically extract your
                             experience, skills, education and projects to help build your
-                            Referly profile.
+                            refermy.life profile.
                         </p>
                     </div>
 

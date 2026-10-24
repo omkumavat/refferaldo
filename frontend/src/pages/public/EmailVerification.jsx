@@ -109,7 +109,7 @@ export const EmailVerification = () => {
                         </div>
 
                         <span className="text-lg font-bold">
-                            Referly
+                            refermy.life
                         </span>
                     </Link>
 

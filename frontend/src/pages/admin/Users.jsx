@@ -5,7 +5,7 @@ import { candidates } from "../../data/candidates";
 import { employees } from "../../data/employees";
 
 export const AdminUsers = () => (
-  <DashboardShell role="admin" roleLabel="Referly Admin" sidebar={adminSidebar}>
+  <DashboardShell role="admin" roleLabel="refermy.life Admin" sidebar={adminSidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Users</h1>
     <p className="text-slate-600 mt-1 mb-6">Every account across candidates and employees.</p>
     <div className="card overflow-x-auto">

@@ -5,7 +5,7 @@ import { companies } from "../../data/companies";
 import { CompanyLogo } from "../../components/CompanyLogo";
 
 export const AdminCompanies = () => (
-  <DashboardShell role="admin" roleLabel="Referly Admin" sidebar={adminSidebar}>
+  <DashboardShell role="admin" roleLabel="refermy.life Admin" sidebar={adminSidebar}>
     <h1 className="text-2xl font-bold tracking-tight text-slate-900">Company verifications</h1>
     <p className="text-slate-600 mt-1 mb-6">Approve or reject new employer accounts.</p>
     <div className="card overflow-x-auto">

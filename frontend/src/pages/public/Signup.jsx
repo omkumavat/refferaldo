@@ -256,7 +256,7 @@ export const Signup = () => {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Get started with Referly in less than a minute."
+      subtitle="Get started with refermy.life in less than a minute."
       footer={
         <>
           Already have an account?{" "}
@@ -281,7 +281,7 @@ export const Signup = () => {
             type="button"
             onClick={() => handleRoleChange(r.key)}
             className={`w-full text-left p-3 rounded-lg border transition-colors flex items-start gap-3 ${role === r.key
-              ? "border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-500/20"
+              ? "border-emerald-600 ring-2 ring-emerald-500/20"
               : "border-slate-200 hover:border-slate-300"
               }`}
             data-testid={`signup-role-${r.key}`}
@@ -417,7 +417,7 @@ export const Signup = () => {
             onChange={handleChange}
             placeholder={
               role === "employee"
-                ? "Work email"
+                ? "Email"
                 : "Email address"
             }
             type="email"
@@ -429,11 +429,11 @@ export const Signup = () => {
             autoComplete="email"
           />
 
-          {role === "employee" && (
+          {/* {role === "employee" && (
             <p className="text-[11px] text-slate-500 mt-1">
               Employees must use their company/work email.
             </p>
-          )}
+          )} */}
 
           {errors.email && (
             <p className="text-xs text-red-500 mt-1">

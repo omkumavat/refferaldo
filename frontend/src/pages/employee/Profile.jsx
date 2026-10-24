@@ -83,16 +83,6 @@ export const EmployeeProfile = () => {
     );
   }
 
-//   if (!profile) {
-//     return (
-//       <DashboardShell role="employee" roleLabel="Employee" sidebar={employeeSidebar}>
-//         <div className="flex items-center justify-center py-32 text-slate-500">
-//           We couldn't load your profile. Please try again later.
-//         </div>
-//       </DashboardShell>
-//     );
-//   }
-
   const companyName =
     profile?.company && typeof profile.company === "object"
       ? profile.company.name

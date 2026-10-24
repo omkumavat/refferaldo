@@ -169,7 +169,7 @@ export const FormPreview = ({
 
             <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
               <CheckCircle2 className="h-3 w-3" />
-              Powered by Referly
+              Powered by refermy.life
             </div>
           </div>
         </div>

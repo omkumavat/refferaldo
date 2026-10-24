@@ -60,7 +60,7 @@ const CONFIG = {
     title: "Add Project",
     icon: FolderKanban,
     fields: [
-      { key: "name", label: "Project Name", placeholder: "Referly" },
+      { key: "name", label: "Project Name", placeholder: "refermy.life" },
       {
         key: "technologies",
         label: "Technologies",

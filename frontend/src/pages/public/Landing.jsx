@@ -19,7 +19,7 @@ import { jobs } from "../../data/jobs";
 import { JobCard } from "../../components/JobCard";
 
 export const Landing = () => (
-  <div className="min-h-screen bg-white">
+  <div className="min-h-screen bg-white page-container py-1">
     <PublicNav />
 
     {/* HERO */}
@@ -86,10 +86,25 @@ export const Landing = () => (
         <p className="text-center text-xs font-semibold uppercase tracking-widest text-slate-500 mb-6">Companies hiring through referrals</p>
         <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
           {companies.slice(0, 8).map((c) => (
-            <div key={c.id} className="flex items-center gap-2 text-slate-600">
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-semibold border ${c.tint}`}>{c.symbol}</div>
-              <span className="text-sm font-semibold text-slate-700">{c.name}</span>
+
+            <div
+              key={c.id}
+              className="flex flex-col items-center gap-3 text-center"
+            >
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-[#302640] bg-[#151020] transition-all duration-200 hover:border-violet-500/60 hover:bg-[#1c152b]">
+                <img
+                  src={c.symbol}
+                  alt={`${c.name} logo`}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+
+              <span className="max-w-full break-words text-center text-base font-semibold leading-snug text-slate-100">
+                {c.name}
+              </span>
             </div>
+
           ))}
         </div>
       </div>
@@ -124,7 +139,7 @@ export const Landing = () => (
     </section>
 
     {/* VALUE PROPS */}
-    <section className="py-20 bg-zinc-50 border-y border-slate-200">
+    <section className="py-20 border-y border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           {
@@ -166,7 +181,7 @@ export const Landing = () => (
     </section>
 
     {/* FEATURED JOBS */}
-    <section className="py-20">
+    {/* <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-8">
           <div>
@@ -181,10 +196,10 @@ export const Landing = () => (
           {jobs.slice(0, 6).map((j) => <JobCard key={j.id} job={j} />)}
         </div>
       </div>
-    </section>
+    </section> */}
 
     {/* TESTIMONIALS */}
-    <section className="py-20 bg-zinc-50 border-y border-slate-200">
+    <section className="py-20 border-y border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="eyebrow text-center">Trusted by professionals</p>
         <h2 className="text-3xl font-bold tracking-tight text-slate-900 text-center mt-2 max-w-2xl mx-auto">Referrals move faster than applications. Always have.</h2>
@@ -214,7 +229,7 @@ export const Landing = () => (
         <div className="rounded-2xl bg-slate-900 p-10 sm:p-14 text-center relative overflow-hidden">
           <BarChart3 className="w-32 h-32 text-white/5 absolute -top-4 -right-4" />
           <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">Get referred. Get noticed. Get hired.</h2>
-          <p className="text-slate-300 mt-3 max-w-xl mx-auto">Join thousands of candidates and employees using Referly to make hiring feel more human.</p>
+          <p className="text-slate-300 mt-3 max-w-xl mx-auto">Join thousands of candidates and employees using refermy.life to make hiring feel more human.</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link to="/signup" className="btn-primary text-base px-5 py-3" data-testid="cta-signup">
               Get started free <ArrowRight className="w-4 h-4" />

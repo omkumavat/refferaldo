@@ -26,6 +26,8 @@ import { DashboardShell } from "../../components/layout/DashboardShell";
 import { employeeSidebar } from "./Dashboard";
 import { SuccessCandidate } from "../../components/referral/SuccessCandidate";
 import { ShowCandidateInfo } from "../../components/referral/showCandidateInfo";
+import ApplicationInfoModal from "../../components/referral/ApplicationInfoModal";
+import {ConfirmReferral} from "../../components/referral/ConfirmReferral"
 
 const statusColors = {
   new: "bg-blue-50 text-blue-700",
@@ -53,6 +55,7 @@ const ReferralAnalytics = () => {
   const [total, setTotal] = useState(0);
   const [successCandidate, setSuccessCandidate] = useState(null);
   const [showCandidateInfo, setShowCandidateInfo] = useState(null);
+  const [showApplicationInfo, setShowApplicationInfo] = useState(null);
   const [localUser] = useState(
     JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
   );
@@ -74,6 +77,9 @@ const ReferralAnalytics = () => {
 
       setSubmissions(submissionResult.data || []);
       setTotal(submissionResult.pagination?.total || 0);
+      matchResult?.data.push({
+        submittedThroughForm:submissionResult?.data?.submissionResult?.data
+      })
       setMatches(matchResult.data || []);
     } catch (err) {
       setError(err.message || "Unable to load analytics.");
@@ -170,6 +176,8 @@ const ReferralAnalytics = () => {
     const submission = item.submission || item;
     const score = item.score ?? item.match?.score;
     const id = submission._id;
+    console.log(submission);
+    
 
     return (
       <tr key={id} className="border-t border-slate-100">
@@ -181,9 +189,6 @@ const ReferralAnalytics = () => {
           <p className="font-semibold text-slate-900">
             {submission.name || submission.candidate?.name || "Candidate"}
           </p>
-          {/* <p className="mt-1 text-xs text-slate-500">
-            {submission.email || submission.candidate?.email || "—"}
-          </p> */}
         </td>
 
         <td className="px-4 py-4">
@@ -228,6 +233,16 @@ const ReferralAnalytics = () => {
             >
               View Profile
             </button>
+
+            {submission.submittedThroughForm && (
+              <button
+                type="button"
+                onClick={() => setShowApplicationInfo(submission)}
+                className="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+              >
+                View Application
+              </button>
+            )}
 
             {
               submission.status === "referred" && (
@@ -467,6 +482,14 @@ const ReferralAnalytics = () => {
           busyId={busyId}
           selected={selected}
           handleRefer={handleRefer}
+        />
+      )}
+
+      {showApplicationInfo && (
+        <ApplicationInfoModal
+          submission={showApplicationInfo}
+          questions={showApplicationInfo.answers}
+          onClose={() => setShowApplicationInfo(false)}
         />
       )}
 

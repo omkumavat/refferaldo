@@ -4,21 +4,22 @@ import { Menu, X, Sparkles } from "lucide-react";
 
 export const PublicNav = () => {
   const [open, setOpen] = useState(false);
+   const [localUser] = useState(
+      JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+    );
   const links = [
-    { to: "/jobs", label: "Find Jobs" },
+    { to: "/jobs", label: "Find Jobs", requireRole:"candidate" },
     { to: "/companies", label: "Companies" },
     { to: "/how-it-works", label: "How It Works" },
-    { to: "/employee/dashboard", label: "For Employees" },
-    { to: "/company/dashboard", label: "For Companies" },
   ];
   return (
-    <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200">
+    <header className="sticky top-0 z-50 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
           <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
             <Sparkles className="w-4 h-4" />
           </div>
-          <span className="text-[17px] font-bold tracking-tight text-slate-900">Referly</span>
+          <span className="text-[17px] font-bold tracking-tight text-slate-900">refermy.life</span>
         </Link>
         <nav className="hidden lg:flex items-center gap-1">
           {links.map((l) => (
@@ -35,8 +36,18 @@ export const PublicNav = () => {
           ))}
         </nav>
         <div className="hidden lg:flex items-center gap-2">
-          <Link to="/login" className="btn-ghost" data-testid="login-btn">Log in</Link>
-          <Link to="/signup" className="btn-primary" data-testid="signup-btn">Sign up</Link>
+          {
+            localUser && localUser.id && localUser.role ? (
+              <>
+              <Link to={`/${localUser.role}/dashboard`} className="btn-primary"  target="_blank" data-testid="login-btn">Dashboard</Link>
+              </>
+            ) : (
+              <>
+              <Link to="/login" className="btn-ghost" data-testid="login-btn">Log in</Link>
+              <Link to="/signup" className="btn-primary" data-testid="signup-btn">Sign up</Link>
+              </>
+            )
+          }
         </div>
         <button
           className="lg:hidden p-2 rounded-md text-slate-600 hover:bg-slate-100"
@@ -72,7 +83,7 @@ export const Footer = () => (
           <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
             <Sparkles className="w-4 h-4" />
           </div>
-          <span className="text-[17px] font-bold tracking-tight text-slate-900">Referly</span>
+          <span className="text-[17px] font-bold tracking-tight text-slate-900">refermy.life</span>
         </div>
         <p className="text-sm text-slate-500 mt-3 max-w-xs">The referral-first hiring marketplace. Get referred, get noticed, get hired.</p>
       </div>
@@ -92,7 +103,7 @@ export const Footer = () => (
       ))}
     </div>
     <div className="border-t border-slate-100 py-5 text-center text-xs text-slate-400">
-      © 2026 Referly. Demo product. All company references are illustrative.
+      © 2026 refermy.life. Demo product. All company references are illustrative.
     </div>
   </footer>
 );
