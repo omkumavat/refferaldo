@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You've Been Referred | refermy.life</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #111015;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #e5e5eb;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 32px auto;
+      background: #1c1b22;
+      border: 1px solid #34313d;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      background-color: #17151d;
+      border-bottom: 1px solid #34313d;
+      text-align: center;
+      padding: 32px 24px;
+    }
+
+    .brand {
+      color: #ffffff;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: #a78bfa;
+    }
+
+    .header-label {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 7px 13px;
+      border: 1px solid #51406e;
+      border-radius: 20px;
+      color: #d6c6ff;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 36px 32px;
+    }
+
+    .eyebrow {
+      color: #a78bfa;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 29px;
+      line-height: 1.3;
+      margin: 12px 0 16px;
+    }
+
+    p {
+      color: #c1bdca;
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 17px;
+    }
+
+    .referral-card {
+      margin: 26px 0;
+      padding: 22px;
+      background: #24222c;
+      border: 1px solid #3a3548;
+      border-radius: 12px;
+    }
+
+    .referral-card h2 {
+      color: #f0edf6;
+      font-size: 17px;
+      margin: 0 0 18px;
+    }
+
+    .detail {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #3a3544;
+    }
+
+    .label {
+      color: #9993a6;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      color: #f0edf6;
+      font-size: 14px;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 20px;
+      background: #33264b;
+      border: 1px solid #574078;
+      color: #d6c6ff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #7c3aed;
+      border: 1px solid #8b5cf6;
+      color: #ffffff !important;
+      text-decoration: none !important;
+      padding: 14px 24px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 8px 0 20px;
+      cursor: pointer;
+      transition: background-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .button:hover {
+      background-color: #6d28d9 !important;
+      border-color: #a78bfa !important;
+      box-shadow: 0 5px 18px rgba(124, 58, 237, 0.35);
+      transform: translateY(-2px);
+      cursor: pointer;
+    }
+
+    .secondary-link {
+      color: #b9a0ff;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .note {
+      padding: 14px 16px;
+      border-left: 3px solid #8b5cf6;
+      background: #24222a;
+      color: #bcb6c9;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .footer {
+      background: #17161c;
+      border-top: 1px solid #34313d;
+      padding: 23px 24px;
+      text-align: center;
+    }
+
+    .footer p {
+      color: #918b9e;
+      font-size: 12px;
+      line-height: 1.7;
+      margin: 0 0 8px;
+    }
+
+    .footer a {
+      color: #b9a0ff;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer a:hover {
+      color: #ddd0ff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .container {
+        margin: 12px;
+        border-radius: 12px;
+      }
+
+      .content {
+        padding: 28px 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .button {
+        padding: 12px 20px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">refermy<span>.life</span></div>
+      <div class="header-label">Direct employee referral</div>
+    </div>
+
+    <div class="content">
+      <div class="eyebrow">A new professional connection</div>
+
+      <h1>You've been referred, {{candidateName}}!</h1>
+
+      <p>
+        Good news! An employee has initiated a direct referral for you on
+        refermy.life. This referral was created from your professional
+        profile, so you did not need to submit a referral form.
+      </p>
+
+      <div class="referral-card">
+        <h2>Your referral details</h2>
+
+        <div class="detail" style="margin-top:0; padding-top:0; border-top:0;">
+          <div class="label">Position</div>
+          <div class="value">{{jobTitle}}</div>
+        </div>
+
+        <div class="detail">
+          <div class="label">Company</div>
+          <div class="value">{{companyName}}</div>
+        </div>
+
+        <div class="detail">
+          <div class="label">Referred by</div>
+          <div class="value">{{employeeName}}</div>
+        </div>
+
+        <div class="detail">
+          <div class="label">Referral type</div>
+          <span class="pill">Direct referral — no form required</span>
+        </div>
+
+        {{!-- <div class="detail">
+          <div class="label">Current status</div>
+          <div class="value">{{statusLabel}}</div>
+        </div> --}}
+      </div>
+
+      <p>
+        You can view the referral details and check its latest status using
+        the button below. Make sure your profile and resume are up to date
+        so the information available to the referrer is accurate.
+      </p>
+
+      <div style="text-align:center;">
+        <a href="{{referralUrl}}" class="button">
+          View My Referrals
+        </a>
+      </div>
+
+      <p class="note">
+        A direct referral does not guarantee an interview or job offer.
+        The employer decides whether to proceed with your application.
+      </p>
+
+      <p>
+        Keep your profile ready, stay open to opportunities, and continue
+        building meaningful professional connections.
+      </p>
+
+      <p>
+        Best wishes,<br />
+        <strong style="color:#302047;">Team refermy.life</strong>
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>Helping talent connect with opportunities.</p>
+      <p>
+        <a href="http://localhost:5173">Visit refermy.life</a>
+      </p>
+      <p>&copy; 2026 refermy.life. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>

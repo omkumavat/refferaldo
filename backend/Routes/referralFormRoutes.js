@@ -8,7 +8,8 @@ import {
     publishReferralForm,
     updateReferralStatus,
     getPublicReferralForm,
-    getCandidateReferralForms
+    getCandidateReferralForms,
+    getFormsPublic
 } from "../controllers/referralFormController.js";
 
 import { authMiddleware } from "../middleware/authMiddleware.js";
@@ -33,6 +34,11 @@ router.get(
   authMiddleware,
   requireRole("candidate"),
   getCandidateReferralForms
+);
+
+router.get(
+  "/forms/public",
+  getFormsPublic
 );
 
 router.get(

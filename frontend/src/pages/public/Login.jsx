@@ -6,8 +6,8 @@ import ResumeOnboarding from "../../components/ResumeOnboarding";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const dashboardByRole = {
-  candidate: "/candidate/dashboard",
-  employee: "/employee/dashboard",
+  candidate: "/candidate/profile",
+  employee: "/employee/profile",
   company: "/company/dashboard",
   admin: "/admin/dashboard",
 };
@@ -49,22 +49,30 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
       <div className="w-full max-w-sm">
         <Link
           to="/"
-          className="lg:hidden flex items-center gap-2 mb-8"
+          className="mb-8 flex items-center gap-2 no-underline lg:hidden"
         >
-          <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
-            <Sparkles className="w-4 h-4" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-400 to-slate-700 text-white shadow-lg shadow-slate-900/30">
+            <Sparkles className="h-4 w-4" />
           </div>
 
-          <span className="text-lg font-bold text-slate-900">
-            refermy.life
+          <span className="text-lg font-bold tracking-tight text-white">
+            referly<span className="text-slate-400">.</span>
           </span>
         </Link>
 
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <Link
+          to="/"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition hover:text-slate-300"
+        >
+          <span aria-hidden="true">←</span>
+          Back to home
+        </Link>
+
+        <h1 className="text-2xl font-bold tracking-tight text-white">
           {title}
         </h1>
 
-        <p className="text-sm text-slate-600 mt-1">
+        <p className="mt-2 text-sm leading-6 text-slate-400">
           {subtitle}
         </p>
 
@@ -73,7 +81,7 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
         </div>
 
         {footer && (
-          <div className="mt-6 pt-6 border-t border-slate-100 text-center text-sm text-slate-600">
+          <div className="mt-6 border-t border-[#302640] pt-6 text-center text-sm text-slate-400">
             {footer}
           </div>
         )}
@@ -85,6 +93,8 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
 export const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const returnUrl = params.get("returnUrl");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -227,6 +237,7 @@ export const Login = () => {
             name: user.name,
             email: user.email,
             role: user.role,
+            avatar: user?.avatar
           })
         );
       } else {
@@ -237,8 +248,16 @@ export const Login = () => {
             name: user.name,
             email: user.email,
             role: user.role,
+            avatar: user?.avatar
           })
         );
+      }
+
+      console.log("returnUrl:", returnUrl);
+
+      if (returnUrl && returnUrl.trim() !== "") {
+        navigate(returnUrl, { replace: true });
+        return;
       }
 
       if (user.role === "candidate" && showResumeParse) {
@@ -246,9 +265,15 @@ export const Login = () => {
           replace: true,
         });
       } else {
-        navigate(dashboard, {
-          replace: true,
-        });
+        if (user.role === "candidate") {
+          navigate(`/candidate/profile/user._id/private`, {
+            replace: true,
+          });
+        } else if (user.role === "employee") {
+          navigate(`/employee/profile`, {
+            replace: true,
+          });
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -269,7 +294,7 @@ export const Login = () => {
         <>
           New to refermy.life?{" "}
           <Link
-            to="/signup"
+            to={`/signup?returnUrl=${encodeURIComponent(returnUrl)}`}
             className="font-semibold text-emerald-700"
           >
             Create an account
@@ -329,11 +354,11 @@ export const Login = () => {
       </div> */}
 
       {/* Divider */}
-      <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
+      {/* <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
         <div className="flex-1 border-t border-slate-200" />
         OR
         <div className="flex-1 border-t border-slate-200" />
-      </div>
+      </div> */}
 
       {/* Login Form */}
       <form
@@ -355,8 +380,8 @@ export const Login = () => {
               value={formData.email}
               onChange={handleChange}
               className={`field pl-9 w-full ${errors.email
-                  ? "border-red-400"
-                  : ""
+                ? "border-red-400"
+                : ""
                 }`}
               placeholder="you@company.com"
               autoComplete="email"
@@ -396,8 +421,8 @@ export const Login = () => {
               value={formData.password}
               onChange={handleChange}
               className={`field pl-9 w-full ${errors.password
-                  ? "border-red-400"
-                  : ""
+                ? "border-red-400"
+                : ""
                 }`}
               placeholder="••••••••"
               autoComplete="current-password"

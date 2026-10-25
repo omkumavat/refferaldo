@@ -307,7 +307,7 @@ const ApplicationInfoModal = ({
                                         return (
                                             <tr
                                                 key={answer._id || questionId || index}
-                                                className="align-top hover:bg-slate-50/70"
+                                                className="align-top"
                                             >
                                                 <td className="px-4 py-4 text-sm text-slate-500">
                                                     {index + 1}

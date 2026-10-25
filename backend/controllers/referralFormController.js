@@ -96,7 +96,7 @@ export const getMyReferralForm = async (
 
     const questions =
       await ReferralQuestion.find({
-        form:id,
+        form: id,
       })
         .sort({
           order: 1,
@@ -492,7 +492,8 @@ export const getCandidateReferralForms = async (req, res) => {
           { applicationDeadline: { $gte: now } },
         ],
       })
-        .populate("company")
+        .populate("company", "name")
+        .populate("createdBy", "name")
         .sort({ createdAt: -1 })
         .lean(),
 
@@ -532,8 +533,8 @@ export const getCandidateReferralForms = async (req, res) => {
 
       const matchScore = requiredSkills.length
         ? Math.round(
-            (matchedSkills.length / requiredSkills.length) * 100
-          )
+          (matchedSkills.length / requiredSkills.length) * 100
+        )
         : null;
 
       const submission = submissionMap.get(String(form._id));
@@ -561,3 +562,39 @@ export const getCandidateReferralForms = async (req, res) => {
     });
   }
 };
+
+export const getFormsPublic = async (req, res) => {
+  try {
+
+    const form =
+      await ReferralForm.find()
+        .populate({
+          path: "createdBy",
+          select: "name",
+        })
+        .populate({
+          path: "company",
+          select: "name",
+        })
+        .lean();
+
+    if (!form) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Referral form not found or no longer active",
+      });
+    }
+
+    return res.json({
+      success: true,
+      form,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+
+      message: "Failed to fetch referral opportunities.",
+    });
+  }
+}

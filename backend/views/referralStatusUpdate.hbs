@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Referral Status Update | refermy.life</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #111015;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #e5e5eb;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 32px auto;
+      background: #1c1b22;
+      border: 1px solid #34313d;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      background-color: #17151d;
+      border-bottom: 1px solid #34313d;
+      padding: 30px 24px;
+      text-align: center;
+    }
+
+    .brand {
+      color: #ffffff;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: #a78bfa;
+    }
+
+    .tagline {
+      margin-top: 9px;
+      color: #aaa5b5;
+      font-size: 13px;
+    }
+
+    .content {
+      padding: 36px 32px;
+    }
+
+    .eyebrow {
+      color: #a78bfa;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 27px;
+      line-height: 1.3;
+      margin: 12px 0 16px;
+    }
+
+    p {
+      color: #c1bdca;
+      font-size: 15px;
+      line-height: 1.8;
+      margin: 0 0 16px;
+    }
+
+    .status-card {
+      background: #24222c;
+      border: 1px solid #3a3548;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 26px 0;
+    }
+
+    .status-label {
+      color: #aaa5b5;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      display: inline-block;
+      background: #33264b;
+      border: 1px solid #574078;
+      color: #d6c6ff;
+      padding: 8px 13px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .detail {
+      border-top: 1px solid #3a3544;
+      margin-top: 18px;
+      padding-top: 16px;
+    }
+
+    .detail-label {
+      color: #9993a6;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      color: #f0edf6;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #7c3aed;
+      border: 1px solid #8b5cf6;
+      color: #ffffff !important;
+      padding: 14px 24px;
+      border-radius: 9px;
+      text-decoration: none !important;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 8px 0 20px;
+      transition: background-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    /* Hover effects work in email clients that support them. */
+    .button:hover {
+      background-color: #6d28d9 !important;
+      border-color: #a78bfa !important;
+      box-shadow: 0 5px 18px rgba(124, 58, 237, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .note {
+      background: #24222a;
+      border-left: 3px solid #8b5cf6;
+      border-radius: 4px;
+      padding: 14px 16px;
+      color: #bcb6c9;
+      font-size: 13px;
+    }
+
+    .footer {
+      background: #17161c;
+      border-top: 1px solid #34313d;
+      padding: 23px 24px;
+      text-align: center;
+    }
+
+    .footer p {
+      color: #918b9e;
+      font-size: 12px;
+      line-height: 1.7;
+      margin: 0 0 8px;
+    }
+
+    .footer a {
+      color: #b9a0ff;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #ddd0ff;
+      text-decoration: underline;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .container {
+        margin: 12px;
+        border-radius: 12px;
+      }
+
+      .content {
+        padding: 28px 20px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .button {
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">refermy<span>.life</span></div>
+      <div class="tagline">Your next opportunity starts with a connection.</div>
+    </div>
+
+    <div class="content">
+      <div class="eyebrow">Referral update</div>
+
+      <h1>{{emailData.emailHeading}}</h1>
+
+      <p>Hi {{candidateName}},</p>
+
+      <p>{{emailData.emailMessage}}</p>
+
+      <div class="status-card">
+        <div class="status-label">Current referral status</div>
+        <span class="status">{{emailData.statusLabel}}</span>
+
+        <div class="detail">
+          <div class="detail-label">Position</div>
+          <div class="detail-value">{{jobTitle}}</div>
+        </div>
+
+        <div class="detail">
+          <div class="detail-label">Company</div>
+          <div class="detail-value">{{companyName}}</div>
+        </div>
+
+        <div class="detail">
+          <div class="detail-label">Referral created by</div>
+          <div class="detail-value">{{employeeName}}</div>
+        </div>
+      </div>
+
+      <p>{{emailData.encouragementMessage}}</p>
+
+      <div style="text-align:center;">
+        <a href="{{dashboardUrl}}" class="button">
+          View Referral Details
+        </a>
+      </div>
+
+      <p class="note">
+        Please note that a referral status is an update on your progress,
+        not a guarantee of an interview or job offer. Final hiring decisions
+        are made by the employer.
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>Helping talent connect with opportunities.</p>
+      <p>
+        This is an automated notification from
+        <a href="http://localhost:5173">refermy.life</a>.
+      </p>
+      <p>&copy; 2026 refermy.life. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>

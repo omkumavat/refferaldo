@@ -1,5 +1,24 @@
-import { Mail, Phone, X } from "lucide-react";
-export const ShowCandidateInfo = ({showCandidateInfo, setShowCandidateInfo, setSuccessCandidate}) => {
+import { Mail, Phone, X, Copy, Check } from "lucide-react";
+import { useState } from "react"
+export const ShowCandidateInfo = ({ showCandidateInfo, setShowCandidateInfo, setSuccessCandidate }) => {
+    const [copiedIndex, setCopiedIndex] = useState(null);
+    const copyInfo = async (data) => {
+
+        try {
+            await navigator.clipboard.writeText(data);
+            setCopiedIndex(data);
+
+            window.setTimeout(() => {
+                setCopiedIndex((current) =>
+                    current === data ? null : current
+                );
+            }, 2000);
+        } catch (err) {
+            console.error("Failed to copy referral link:", err);
+            window.prompt("Copy your referral link:", url);
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
             <div
@@ -52,11 +71,11 @@ export const ShowCandidateInfo = ({showCandidateInfo, setShowCandidateInfo, setS
                             value: showCandidateInfo.email || candidate.email,
                             icon: Mail,
                         },
-                        {
-                            label: "Phone number",
-                            value: showCandidateInfo.phone || candidate.phone,
-                            icon: Phone,
-                        },
+                        // {
+                        //     label: "Phone number",
+                        //     value: showCandidateInfo.phone || candidate.phone,
+                        //     icon: Phone,
+                        // },
                         // {
                         //   label: "Location",
                         //   value: showCandidateInfo.location || candidate.location,
@@ -76,7 +95,7 @@ export const ShowCandidateInfo = ({showCandidateInfo, setShowCandidateInfo, setS
                             {details.map(({ label, value, icon: Icon }) => (
                                 <div
                                     key={label}
-                                    className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-4"
+                                    className="flex items-start gap-3 rounded-xl border border-slate-100 p-4"
                                 >
                                     <div className="mt-0.5 text-emerald-600">
                                         <Icon size={18} />
@@ -90,6 +109,19 @@ export const ShowCandidateInfo = ({showCandidateInfo, setShowCandidateInfo, setS
                                             {value || "Not provided"}
                                         </p>
                                     </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => copyInfo(value)}
+                                        title={copiedIndex === value ? "Copied!" : `Copy ${label}`}
+                                        className="shrink-0 rounded-md p-1.5 text-slate-400 hover:bg-emerland-100 hover:text-slate-700 transition-colors"
+                                    >
+                                        {copiedIndex === value ? (
+                                            <Check size={16} className="text-green-600" />
+                                        ) : (
+                                            <Copy size={16} />
+                                        )}
+                                    </button>
                                 </div>
                             ))}
                         </div>

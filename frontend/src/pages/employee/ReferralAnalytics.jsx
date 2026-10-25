@@ -22,19 +22,21 @@ import {
   updateSubmissionStatus,
   referCandidate,
 } from "../../api/referralApi";
+import { StatusBadge } from "../../components/Badges";
 import { DashboardShell } from "../../components/layout/DashboardShell";
 import { employeeSidebar } from "./Dashboard";
 import { SuccessCandidate } from "../../components/referral/SuccessCandidate";
 import { ShowCandidateInfo } from "../../components/referral/showCandidateInfo";
 import ApplicationInfoModal from "../../components/referral/ApplicationInfoModal";
-import {ConfirmReferral} from "../../components/referral/ConfirmReferral"
+import { ConfirmReferral } from "../../components/referral/ConfirmReferral"
+import { ConfirmReject } from "../../components/referral/ConfirmReject"
 
 const statusColors = {
   new: "bg-blue-50 text-blue-700",
   reviewing: "bg-amber-50 text-amber-700",
   shortlisted: "bg-emerald-50 text-emerald-700",
   rejected: "bg-red-50 text-red-700",
-  referred: "bg-violet-50 text-violet-700",
+  referred: "bg-slate-50 text-slate-700",
   hired: "bg-green-100 text-green-800",
 };
 
@@ -56,6 +58,8 @@ const ReferralAnalytics = () => {
   const [successCandidate, setSuccessCandidate] = useState(null);
   const [showCandidateInfo, setShowCandidateInfo] = useState(null);
   const [showApplicationInfo, setShowApplicationInfo] = useState(null);
+  const [selectedReject, setSelectedReject] = useState(null);
+
   const [localUser] = useState(
     JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
   );
@@ -78,7 +82,7 @@ const ReferralAnalytics = () => {
       setSubmissions(submissionResult.data || []);
       setTotal(submissionResult.pagination?.total || 0);
       matchResult?.data.push({
-        submittedThroughForm:submissionResult?.data?.submissionResult?.data
+        submittedThroughForm: submissionResult?.data?.submissionResult?.data
       })
       setMatches(matchResult.data || []);
     } catch (err) {
@@ -151,6 +155,27 @@ const ReferralAnalytics = () => {
     }
   };
 
+  const handleReject = async () => {
+
+    if (!selectedReject) return;
+
+    const candidate = selectedReject;
+    setBusyId(candidate._id);
+    setError("");
+
+    try {
+      await updateSubmissionStatus(candidate._id, "rejected");
+
+      setSelectedReject(null);
+
+      await loadData();
+    } catch (err) {
+      setError(err.message || "Referral failed.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
 
   const cards = [
     { label: "Applications", value: total, icon: Users },
@@ -177,7 +202,7 @@ const ReferralAnalytics = () => {
     const score = item.score ?? item.match?.score;
     const id = submission._id;
     console.log(submission);
-    
+
 
     return (
       <tr key={id} className="border-t border-slate-100">
@@ -214,13 +239,9 @@ const ReferralAnalytics = () => {
         </td>
 
         <td className="px-4 py-4">
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusColors[submission.status] ||
-              "bg-slate-100 text-slate-600"
-              }`}
-          >
-            {submission.status || "new"}
-          </span>
+          <StatusBadge
+            stage={submission.status || "new"}
+          />
         </td>
 
         <td className="px-4 py-4">
@@ -229,7 +250,7 @@ const ReferralAnalytics = () => {
               type="button"
               disabled={busyId === id}
               onClick={() => handleViewProfile(submission)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerland-500 disabled:opacity-50"
             >
               View Profile
             </button>
@@ -245,6 +266,19 @@ const ReferralAnalytics = () => {
             )}
 
             {
+              submission.status != "referred" && (submission.status == "new"
+                || submission.status == "reviewing") && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedReject(submission)}
+                  className="rounded-lg bg-red-500 px-3 py-2 text-sm font-medium text-red hover:bg-red-700"
+                >
+                  Reject
+                </button>
+              )
+            }
+
+            {
               submission.status === "referred" && (
                 <button
                   type="button"
@@ -254,7 +288,7 @@ const ReferralAnalytics = () => {
                     phone: submission.phone || submission.candidate?.phone,
                     name: submission.name || submission.candidate?.name,
                   })}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerland-50 disabled:opacity-50"
                 >
                   View Personal Info
                 </button>
@@ -287,12 +321,12 @@ const ReferralAnalytics = () => {
       userName={localUser.name}
     >
       <div className="max-w-6xl mx-auto">
-        <header className="border-b border-slate-200 bg-white">
+        <header className="border-b border-slate-200">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
             <div>
               <Link
                 to="/employee/referral/forms"
-                className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-3"
+                className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-8"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Refer a Job
@@ -482,6 +516,15 @@ const ReferralAnalytics = () => {
           busyId={busyId}
           selected={selected}
           handleRefer={handleRefer}
+        />
+      )}
+
+      {selectedReject && (
+        <ConfirmReject
+          setSelected={setSelectedReject}
+          busyId={busyId}
+          selected={selectedReject}
+          handleReject={handleReject}
         />
       )}
 

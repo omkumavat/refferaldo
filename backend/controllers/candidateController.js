@@ -1,6 +1,7 @@
 import Candidate from '../models/CandidateProfile.js';
 import Job from '../models/Job.js';
-import Application from '../models/Application.js';
+import User from "../models/User.js"
+import ReferralSubmission from '../models/Application.js';
 import ReferralRequest from '../models/ReferralRequest.js';
 import Referral from '../models/Referral.js';
 import Employee from '../models/Employee.js';
@@ -159,7 +160,7 @@ export const parseResume = async (req, res) => {
         const autosave = req.query.autosave === "true";
 
         if (extracted) {
-            const { id, ...safeExtracted } = extracted; 
+            const { id, ...safeExtracted } = extracted;
 
             const profile = await Candidate.findOneAndUpdate(
                 { user: req.params.id },
@@ -168,37 +169,41 @@ export const parseResume = async (req, res) => {
             );
         }
 
-        res.json({ success: true, data: { resumeUrl, extracted, parseError }})
+        res.json({ success: true, data: { resumeUrl, extracted, parseError } })
     } catch (error) {
         console.error("Resume parse failed:", error);
         res.status(500).json({ success: false, message: "Failed to process resume" });
     }
 }
 
-export const applications = async (req, res) => {
-    const {
-        page,
-        limit,
-        skip
-    } = getPagination(req);
-    const [data, total] = await Promise.all([Application.find({
-        candidate: req.user._id
-    }).populate({
-        path: 'job',
-        populate: {
-            path: 'company',
-            select: 'name logo'
-        }
-    }).skip(skip).limit(limit).sort({
-        createdAt: -1
-    }), Application.countDocuments({
-        candidate: req.user._id
-    })]);
-    return res.json({
-        success: true,
-        data,
-        pagination: meta(page, limit, total)
-    });
+export const getMyReferralSubmissions = async (req, res) => {
+    try {
+        const candidateId = req.params.userId || req.user.id;
+
+        const submissions = await ReferralSubmission.find({
+            candidate: candidateId,
+        })
+            .populate("answers.question")
+            .populate({
+                path: "form",
+                select: "title roleName jobTitle slug company createdBy employee",
+                populate: [
+                    { path: "company", select: "name companyname" },
+                    { path: "createdBy", select: "name email" },
+                    // { path: "employee", select: "name email" },
+                ],
+            })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        return res.status(200).json({ submissions });
+    } catch (error) {
+        console.error("Get candidate submissions error:", error);
+
+        return res.status(500).json({
+            message: "Failed to fetch your submissions.",
+        });
+    }
 };
 export const referrals = async (req, res) => {
     const {
@@ -282,4 +287,90 @@ export const recommended = async (req, res) => {
     const rec = await ai.generateJobRecommendations(jobs, p);
     rec.sort((a, b) => b.score - a.score);
     return ok(res, rec.slice(0, 20));
+};
+
+
+
+import fs from "fs/promises";
+import path from "path";
+
+const profileImageDir = path.resolve("public/profile-images");
+
+async function deleteOldLocalPhoto(photoUrl) {
+  if (
+    typeof photoUrl !== "string" ||
+    !photoUrl.startsWith("/uploads/profile-images/")
+  ) {
+    return;
+  }
+
+  const filename = path.basename(photoUrl);
+  const filePath = path.join(profileImageDir, filename);
+
+  // Ensure the resolved path remains inside the upload directory.
+  if (path.dirname(filePath) !== profileImageDir) return;
+
+  await fs.unlink(filePath).catch(() => {});
+}
+
+export const uploadProfilePhoto = async (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: "Please select an image.",
+    });
+  }
+
+  const newFilePath = req.file.path;
+
+  try {
+    const userId = req.param?.userId || req.user?._id;
+
+    if (!userId) {
+      await fs.unlink(newFilePath).catch(() => {});
+
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required.",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      await fs.unlink(newFilePath).catch(() => {});
+
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    const previousPhoto = user.avatar;
+    const photoUrl =
+      `/public/profile-images/${req.file.filename}`;
+
+    user.avatar = photoUrl;
+    await user.save();
+
+    // Cleanup is best-effort; never fail a successful update just
+    // because an old file could not be deleted.
+    if (previousPhoto && previousPhoto !== photoUrl) {
+      await deleteOldLocalPhoto(previousPhoto);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile photo updated successfully.",
+      user: {
+        _id: user._id,
+        name: user.name,
+        role: user.role,
+        photo: photoUrl,
+      },
+    });
+  } catch (error) {
+    await fs.unlink(newFilePath).catch(() => {});
+    next(error);
+  }
 };

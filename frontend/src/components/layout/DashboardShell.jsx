@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Sparkles, Bell, Search, Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 
-export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahul", sidebar = [], children }) => {
+export const DashboardShell = ({ role = "candidate",  roleLabel, userName = "Rahul", sidebar = [], children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -10,8 +10,8 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
   const navigate = useNavigate();
 
   const [localUser] = useState(
-            JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
-        );
+    JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
+  );
 
   const roleSwitch = [
     { label: "Candidate", to: "/candidate/dashboard", key: "candidate" },
@@ -83,7 +83,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
             {sidebar.map((item) => {
               const Icon = item.icon;
               const linkTo = item.requiresId
-                ? `${item.to}/${localUser?.id?.slice(0,4)}-${localUser?.id?.slice(4,9)}/private`
+                ? `${item.to}/${localUser?.id?.slice(0, 4)}-${localUser?.id?.slice(4, 9)}/private`
                 : item.to;
               return (
                 <NavLink
@@ -94,7 +94,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
                       ? "bg-emerald-50 text-emerald-700"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      : "text-slate-600 hover:bg-emerland-950 hover:text-emerland-100"
                     }`
                   }
                   data-testid={`sidebar-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
@@ -139,16 +139,13 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
             <button className="lg:hidden p-2 rounded text-slate-500 hover:bg-slate-100" onClick={() => setSidebarOpen(true)} data-testid="open-sidebar">
               <Menu className="w-5 h-5" />
             </button>
-            <div className="relative flex-1 hidden sm:block">
+            {/* <div className="relative flex-1 hidden sm:block">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input placeholder="Search jobs, candidates, companies..." className="field pl-9 py-2 text-sm" data-testid="global-search" />
-            </div>
+            </div> */}
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 relative" data-testid="notifications-bell">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-500 rounded-full" />
-            </button>
+
             <div className="relative">
               {/* User Button */}
               <div
@@ -157,7 +154,19 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
                 onClick={() => setShowUserMenu((prev) => !prev)}
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl font-semibold">
-                  {userName.charAt(0).toUpperCase()}
+                  {localUser?.avatar ? (
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl font-semibold shrink-0">
+                      <img
+                        src={`http://localhost:4000${localUser.avatar}`}
+                        alt={localUser.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl font-semibold">
+                      {localUser?.name?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
+                  )}
                 </div>
 
                 <div className="hidden md:block leading-tight">
@@ -182,9 +191,9 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
 
                   {/* Profile */}
                   <Link
-                    to={`/${role}/profile`}
+                    to={`/${role}/profile${role === "candidate" ? "/" + localUser.id + "/private" : ""}`}
                     onClick={() => setShowUserMenu(false)}
-                    className="flex items-center gap-3 px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-3 px-2 py-1.5 text-sm text-slate-700 hover:bg-emerland-500 transition-colors"
                   >
                     <User className="w-4 h-4 text-slate-500" />
                     <span>Profile</span>
@@ -197,7 +206,7 @@ export const DashboardShell = ({ role = "candidate", roleLabel, userName = "Rahu
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-3 px-2 py-1.5 text-sm text-red-600  transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>

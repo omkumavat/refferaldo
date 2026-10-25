@@ -8,15 +8,15 @@ import { candidates } from "../../data/candidates";
 import { toast } from "sonner";
 
 const sidebar = [
-  { to: "/employee/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
+  // { to: "/employee/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/employee/jobs", label: "Company Jobs", icon: Briefcase },
   { to: "/employee/refer-job", label: "Refer a Job", icon: Briefcase },
   { to: "/employee/referral/forms", label: "My Referrals", icon: Briefcase },
   { to: "/employee/candidates", label: "Candidates", icon: Users },
-  { to: "/employee/rewards", label: "Rewards", icon: Gift },
-  { to: "/employee/verify", label: "Verify Employment", icon: ShieldCheck },
-  { to: "/employee/notifications", label: "Notifications", icon: Bell },
-  { to: "/employee/settings", label: "Settings", icon: Settings },
+  // { to: "/employee/rewards", label: "Rewards", icon: Gift },
+  // { to: "/employee/verify", label: "Verify Employment", icon: ShieldCheck },
+  // { to: "/employee/notifications", label: "Notifications", icon: Bell },
+  // { to: "/employee/settings", label: "Settings", icon: Settings },
    { to: "/employee/profile", label: "Profile", icon: User },
 ];
 

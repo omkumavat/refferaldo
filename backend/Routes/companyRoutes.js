@@ -4,12 +4,16 @@ const router = express.Router();
 import {authMiddleware} from '../middleware/authMiddleware.js';
 import {requireRole} from '../middleware/roleMiddleware.js';
 import {requireCompanyAccess} from '../middleware/companyAccessMiddleware.js';
-import {getCompanyJobs} from '../controllers/companyController.js';
+import {getCompanyJobs, getPublicCompanies} from '../controllers/companyController.js';
 
 import {body,param} from 'express-validator';
 import v from '../middleware/validationMiddleware.js';
 
 router.get('/get-jobs/:id',  getCompanyJobs)
+
+// Public route — no authentication required.
+router.get("/", getPublicCompanies);
+
 // const companyFields = [body('name').optional().trim().isLength({
 //     min: 2,
 //     max: 150

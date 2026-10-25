@@ -10,6 +10,8 @@ import CandidateReferModal from "../../components/referral/CandidateReferModal";
 import { getMostReferredCandidates } from "../../api/referralApi";
 import { SuccessCandidate } from "../../components/referral/SuccessCandidate";
 import { ShowCandidateInfo } from "../../components/referral/showCandidateInfo";
+import { ConfirmReferral } from "../../components/referral/ConfirmReferral";
+import {referCandidateToForm} from "../../api/referralApi"
 
 export const EmployeeCandidates = () => {
   const navigate = useNavigate();
@@ -20,6 +22,9 @@ export const EmployeeCandidates = () => {
   const [error, setError] = useState("");
   const [successCandidate, setSuccessCandidate] = useState(null);
   const [showCandidateInfo, setShowCandidateInfo] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [busyId, setBusyId] = useState(null);
+  const [formId, setFormId] = useState(null);
   const [localUser] = useState(
     JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
   );
@@ -41,6 +46,35 @@ export const EmployeeCandidates = () => {
   useEffect(() => {
     loadCandidates();
   }, [loadCandidates]);
+
+  const handleRefer = async () => {
+
+    if (!selected) return;
+
+    const candidate = selected;
+    console.log("Referring candidate:", candidate);
+    setBusyId(candidate._id);
+    setError("");
+
+
+    try {
+      const result = await referCandidateToForm(
+        formId,
+        candidate._id || candidate.id
+      );
+
+      setSelected(null);
+      setShowCandidateInfo(null);
+      setSuccessCandidate(candidate);
+
+      // await loadData();
+    } catch (err) {
+      setError(err.message || "Referral failed.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
 
   return (
     <DashboardShell
@@ -126,20 +160,33 @@ export const EmployeeCandidates = () => {
           )}
 
           {/* Refer candidate modal */}
-          {selectedCandidate && (
-            <CandidateReferModal
-              candidate={selectedCandidate}
-              onClose={() => setSelectedCandidate(null)}
-              onSuccess={(candidate) => {
-                setSelectedCandidate(null);
-                setSuccessCandidate(candidate || selectedCandidate);
-                setShowCandidateInfo(null);
-                loadCandidates();
-              }}
-            />
-          )}
         </div>
       </div>
+
+      {selectedCandidate && (
+        <CandidateReferModal
+          candidate={selectedCandidate}
+          setFormId={setFormId}
+          onClose={() => setSelectedCandidate(null)}
+          onSuccess={(candidate) => {
+            setSelected(selectedCandidate);
+            // setSelectedCandidate(null)
+            // setSuccessCandidate(candidate || selectedCandidate);
+            // setShowCandidateInfo(null);
+            loadCandidates();
+          }}
+        />
+      )}
+
+      {selected && (
+        <ConfirmReferral
+          setSelected={setSelected}
+          busyId={busyId}
+          selected={selected}
+          handleRefer={handleRefer}
+        />
+      )}
+
       {successCandidate && !showCandidateInfo && (
         <SuccessCandidate
           successCandidate={successCandidate}

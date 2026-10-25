@@ -154,10 +154,10 @@ export const JobDetailsForm = ({ job, setJob }) => {
               }
               className="form-input"
             >
-              <option value="onsite">On-site</option>
-              <option value="hybrid">Hybrid</option>
-              <option value="remote">Remote</option>
-              <option value="not-disclose">Not disclose</option>
+              <option value="On-site">On-site</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Remote">Remote</option>
+              <option value="Not disclose">Not disclose</option>
             </select>
           </div>
         </div >
@@ -176,11 +176,11 @@ export const JobDetailsForm = ({ job, setJob }) => {
               }
               className="form-input"
             >
-              <option value="full-time">Full-time</option>
-              <option value="part-time">Part-time</option>
-              <option value="contract">Contract</option>
-              <option value="internship">Internship</option>
-              <option value="freelance">Freelance</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Freelance">Freelance</option>
             </select>
           </div>
 

@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import {
   calculateReferralMatch,
 } from "../services/referralMatchingService.js";
+import { sendReferralStatusEmail, sendDirectReferralEmail } from "./EmailService.js"
 
 
 
@@ -245,7 +246,7 @@ export const submitReferral = async (req, res) => {
       email: normalizedEmail,
       phone: phone?.trim() || undefined,
       answers: finalAnswers,
-      submittedThroughForm:true
+      submittedThroughForm: true
     });
 
     // 14. Increment submission count.
@@ -293,7 +294,7 @@ export const submitReferral = async (req, res) => {
 };
 
 
-
+import { referralStatusMessages } from "../data/referralStatusEmail.js"
 export const updateSubmissionStatus = async (req, res) => {
   try {
     const { submissionId } = req.params;
@@ -319,7 +320,20 @@ export const updateSubmissionStatus = async (req, res) => {
       submissionId,
       { $set: { status } },
       { new: true, runValidators: true }
-    );
+    ).populate({
+      path: "form",
+      select: "title company createdBy",
+      populate: [
+        {
+          path: "company",
+          select: "name",
+        },
+        {
+          path: "createdBy",
+          select: "name",
+        },
+      ],
+    });
 
     if (!submission) {
       return res.status(404).json({
@@ -327,6 +341,12 @@ export const updateSubmissionStatus = async (req, res) => {
         message: "Submission not found",
       });
     }
+
+    const statusInfo = referralStatusMessages[status];
+    sendReferralStatusEmail(submission?.email, submission, statusInfo).catch((err) => {
+      console.error('Error sending referral status email:', err);
+    });
+
 
     return res.json({
       success: true,
@@ -472,7 +492,7 @@ export const getAvailableReferralForms = async (req, res) => {
     const submissions = await ReferralSubmission.find({
       form: { $in: forms.map((f) => f._id) },
       candidate: req.params.candidateId,
-      status: "referred",
+      // status: "referred",
     }).lean();
 
     const submissionMap = submissions.map((sub) => ({
@@ -525,7 +545,8 @@ export const referCandidateToForm = async (req, res) => {
         _id: formId,
         // company: companyId,
         status: "active",
-      }),
+      }).populate("company", "name")
+        .populate("createdBy", "name"),
       User.findOne({
         _id: candidateId,
         role: "candidate",
@@ -574,13 +595,19 @@ export const referCandidateToForm = async (req, res) => {
       phone: candidate.phone || "",
       answers: [],
       status: "referred",
-      submittedThroughForm:false
+      submittedThroughForm: false
     });
 
     await ReferralForm.updateOne(
       { _id: form._id },
       { $inc: { submissions: 1 } }
     );
+
+    sendDirectReferralEmail(candidate?.email, candidate.name, form.title, form.company.name,
+      form.createdBy.name
+    ).catch((err) => {
+      console.error('Error sending referral status email:', err);
+    });
 
     return res.status(201).json({
       success: true,

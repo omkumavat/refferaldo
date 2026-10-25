@@ -114,8 +114,17 @@ export const MyReferralForms = () => {
     navigate(`/employee/refer-job/create?edit=${form._id}`);
   };
 
+  const openPreviewForm = (form) => {
+    if (form.status === "active") {
+      navigate(`/employee/form/preview/${form.slug}`);
+      return;
+    }
+
+    navigate(`/employee/refer-job/create?edit=${form._id}`);
+  }
+
   const copyLink = async (form) => {
-    const url = `${window.location.origin}/apply/${form.slug}`;
+    const url = `${window.location.origin}/candidate/apply/${form.slug}`;
 
     try {
       await navigator.clipboard.writeText(url);
@@ -382,12 +391,24 @@ export const MyReferralForms = () => {
                               >
                                 <Copy className="w-4 h-4" />
                               </button>
+                              
+                            )}
+
+                            {form.status === "active" && (
+                              <button
+                                type="button"
+                                onClick={() => openPreviewForm(form)}
+                                title="Copy public link"
+                                className="p-2 rounded-lg border border-slate-200 text-slate-500 hover:text-emerald-700 hover:border-emerald-200"
+                              >
+                                Preview Form
+                              </button>
                             )}
 
                             <button
                               type="button"
                               onClick={() => openForm(form)}
-                              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:border-emerland-950"
                             >
                               {form.status === "active" ? (
                                 <>

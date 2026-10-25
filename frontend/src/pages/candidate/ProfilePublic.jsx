@@ -431,7 +431,7 @@ export const CandidateProfilePublic = () => {
                                     <span className="text-xs text-slate-400">Not verified</span>
                                 )}
                             </li>
-                            <li className="flex items-center justify-between">
+                            {/* <li className="flex items-center justify-between">
                                 <span className="inline-flex items-center gap-2 text-slate-600">
                                     <Phone className="w-3.5 h-3.5" /> Phone
                                 </span>
@@ -440,7 +440,7 @@ export const CandidateProfilePublic = () => {
                                 ) : (
                                     <span className="text-xs text-slate-400">Not verified</span>
                                 )}
-                            </li>
+                            </li> */}
                             <li className="flex items-center justify-between">
                                 <span className="inline-flex items-center gap-2 text-slate-600">
                                     <FileText className="w-3.5 h-3.5" /> Resume
@@ -498,7 +498,7 @@ export const CandidateProfilePublic = () => {
                             <div className="space-y-1">
                                 {profile.github && (
                                     <a
-                                        href={profile.github}
+                                        href={`https://${profile.github}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 py-1"
@@ -508,7 +508,7 @@ export const CandidateProfilePublic = () => {
                                 )}
                                 {profile.linkedin && (
                                     <a
-                                        href={profile.linkedin}
+                                        href={`https://${profile.linkedin}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 py-1"
@@ -518,7 +518,7 @@ export const CandidateProfilePublic = () => {
                                 )}
                                 {profile.portfolio && (
                                     <a
-                                        href={profile.portfolio}
+                                        href={`https://profile.portfolio}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 py-1"

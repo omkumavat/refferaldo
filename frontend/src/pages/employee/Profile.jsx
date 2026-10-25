@@ -221,7 +221,7 @@ export const EmployeeProfile = () => {
                   <span className="text-xs text-slate-400">Not verified</span>
                 )}
               </li>
-              <li className="flex items-center justify-between">
+              {/* <li className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-2 text-slate-600">
                   <Phone className="w-3.5 h-3.5" /> Phone
                 </span>
@@ -230,7 +230,7 @@ export const EmployeeProfile = () => {
                 ) : (
                   <span className="text-xs text-slate-400">Not verified</span>
                 )}
-              </li>
+              </li> */}
               <li className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-2 text-slate-600">
                   <Building2 className="w-3.5 h-3.5" /> Company

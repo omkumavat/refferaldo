@@ -1,5 +1,12 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+  useLocation
+} from "react-router-dom";
 import { Toaster } from "sonner";
 
 // Public
@@ -14,6 +21,8 @@ import { Signup } from "./pages/public/Signup";
 import { ForgotPassword } from "./pages/public/ForgotPassword";
 import { EmailVerification } from "./pages/public/EmailVerification";
 import ResumeOnboarding from './components/ResumeOnboarding'
+import {Contact} from "./pages/public/Contact"
+import {PublicJobs} from "./pages/public/PublicJobs"
 
 // Candidate
 import { CandidateDashboard } from "./pages/candidate/Dashboard";
@@ -36,9 +45,10 @@ import { EmployeeRewards } from "./pages/employee/Rewards";
 import { EmployeeVerify } from "./pages/employee/Verify";
 import { EmployeeNotifications } from "./pages/employee/Notifications";
 import { EmployeeSettings } from "./pages/employee/Settings";
-import {EmployeeProfile} from './pages/employee/Profile'
+import { EmployeeProfile } from './pages/employee/Profile'
 import { ReferJob } from "./pages/employee/ReferJob";
 import { CreateReferral } from "./pages/employee/CreateReferral";
+import FormPreviewToEmployee from "./pages/employee/FormPreviewToEmployee"
 
 // Company
 import { CompanyDashboard } from "./pages/company/Dashboard";
@@ -63,87 +73,255 @@ import ApplyReferral from "./pages/public/ApplyReferral";
 import ReferralAnalytics from "./pages/employee/ReferralAnalytics";
 import { MyReferralForms } from "./components/referral/ReferralForms";
 
+// Read the logged-in user from localStorage or sessionStorage.
+function getStoredUser() {
+  try {
+    const storedUser =
+      localStorage.getItem("user") ||
+      sessionStorage.getItem("user");
+
+    if (!storedUser) return null;
+
+    const user = JSON.parse(storedUser);
+
+    if (
+      !user ||
+      typeof user !== "object" ||
+      typeof user.role !== "string"
+    ) {
+      return null;
+    }
+
+    return {
+      ...user,
+      role: user.role.trim().toLowerCase(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Send each role to its own dashboard.
+function getDashboardPath(role) {
+  const dashboards = {
+    candidate: "/candidate/dashboard",
+    employee: "/employee/dashboard",
+    company: "/company/dashboard",
+    admin: "/admin/dashboard",
+  };
+
+  return dashboards[role] || "/";
+}
+
+// Protect authenticated routes and enforce allowed roles
+
+function ProtectedRoute({ allowedRoles }) {
+  const user = getStoredUser();
+  const location = useLocation();
+
+  // Not logged in: preserve the requested URL
+  if (!user) {
+    const returnUrl =
+      location.pathname + location.search + location.hash;
+
+    return (
+      <Navigate
+        to={`/login?returnUrl=${encodeURIComponent(returnUrl)}`}
+        state={{ returnUrl }}
+        replace
+      />
+    );
+  }
+
+  // Logged in but unauthorized
+  if (
+    allowedRoles &&
+    !allowedRoles.includes(user.role)
+  ) {
+    return (
+      <Navigate
+        to={getDashboardPath(user.role)}
+        replace
+      />
+    );
+  }
+
+  return <Outlet />;
+}
+
+
+// Prevent logged-in users from visiting login/signup pages.
+function PublicOnlyRoute() {
+  const user = getStoredUser();
+
+  if (user) {
+    return (
+      <Navigate
+        to={getDashboardPath(user.role)}
+        replace
+      />
+    );
+  }
+
+  return <Outlet />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Toaster richColors position="top-right" />
+
       <Routes>
-        {/* Public */}
+        {/* Public routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/jobs" element={<JobsList />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/companies" element={<CompaniesList />} />
         <Route path="/companies/:id" element={<CompanyDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
-        {
-          localStorage.getItem("user") || sessionStorage.getItem("user") ? (
-            <Route path="/login" element={<Navigate to="/" replace />} />
-          ) : (
-            <Route path="/login" element={<Login />} />
-          )
-        }
-        {
-          localStorage.getItem("user") || sessionStorage.getItem("user") ? (
-            <Route path="/signup" element={<Navigate to="/" replace />} />
-          ) : (
-            <Route path="/signup" element={<Signup />} />
-          )
-        }
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/talk-with-us" element={<Contact />} />
+        <Route path="/public/jobs" element={<PublicJobs />} />
+
+        {/* Public candidate profile */}
+        <Route
+          path="/candidate/profile/:id/public"
+          element={<CandidateProfilePublic />}
+        />
+
+        {/* Guest-only routes */}
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
         <Route path="/verify" element={<EmailVerification />} />
-        <Route path="/apply/:slug" element={<ApplyReferral />} />
 
-        {/* Candidate */}
-        <Route path="/candidate" element={<Navigate to="/candidate/dashboard" replace />} />
-        <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
-        <Route path="/candidate/profile/:id/private" element={<CandidateProfile />} />
-        <Route path="/candidate/profile/:id/public" element={<CandidateProfilePublic />} />
-        <Route path="/candidate/jobs" element={<CandidateJobs />} />
-        <Route path="/candidate/applications" element={<CandidateApplications />} />
-        <Route path="/candidate/referrals" element={<CandidateReferrals />} />
-        <Route path="/candidate/saved" element={<CandidateSaved />} />
-        <Route path="/candidate/notifications" element={<CandidateNotifications />} />
-        <Route path="/candidate/settings" element={<CandidateSettings />} />
-        <Route path="/candidate/resume-onboarding" element={<ResumeOnboarding/>} />
-        {/* Employee */}
-        <Route path="/employee" element={<Navigate to="/employee/dashboard" replace />} />
-        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
-        <Route path="/employee/candidates" element={<EmployeeCandidates />} />
-        <Route path="/employee/candidates/:id" element={<EmployeeCandidateProfile />} />
-        <Route path="/employee/referrals" element={<EmployeeReferrals />} />
-        <Route path="/employee/jobs" element={<EmployeeJobs />} />
-        <Route path="/employee/rewards" element={<EmployeeRewards />} />
-        <Route path="/employee/verify" element={<EmployeeVerify />} />
-        <Route path="/employee/notifications" element={<EmployeeNotifications />} />
-        <Route path="/employee/settings" element={<EmployeeSettings />} />
-        <Route path ="/employee/profile" element={<EmployeeProfile/>} />
-        <Route path ="/employee/refer-job" element={<ReferJob/>} />
-        <Route path ="/employee/refer-job/create" element={<CreateReferral/>} />
-        <Route path ="/employee/referral/forms" element={<MyReferralForms/>} />
-        <Route path ="/employee/referral/form/submission" element={<ReferralAnalytics/>} />
 
-        {/* Company */}
-        <Route path="/company" element={<Navigate to="/company/dashboard" replace />} />
-        <Route path="/company/dashboard" element={<CompanyDashboard />} />
-        <Route path="/company/jobs" element={<CompanyJobs />} />
-        <Route path="/company/jobs/create" element={<CompanyCreateJob />} />
-        <Route path="/company/jobs/:id" element={<CompanyCreateJob />} />
-        <Route path="/company/referrals" element={<CompanyReferrals />} />
-        <Route path="/company/candidates" element={<CompanyCandidates />} />
-        <Route path="/company/employees" element={<CompanyEmployees />} />
-        <Route path="/company/analytics" element={<CompanyAnalytics />} />
-        <Route path="/company/settings" element={<CompanySettings />} />
+        {/* Candidate routes */}
+        <Route
+          path="/candidate"
+          element={<ProtectedRoute allowedRoles={["candidate"]} />}
+        >
+          {/* <Route
+            index
+            element={
+              <Navigate to="/candidate" replace />
+            }
+          /> */}
+          <Route path="apply/:slug" element={<ApplyReferral />} />
+          <Route path="dashboard" element={<CandidateDashboard />} />
+          <Route
+            path="profile/:id/private"
+            element={<CandidateProfile />}
+          />
+          <Route path="jobs" element={<CandidateJobs />} />
+          <Route
+            path="applications"
+            element={<CandidateApplications />}
+          />
+          <Route path="referrals" element={<CandidateReferrals />} />
+          <Route path="saved" element={<CandidateSaved />} />
+          <Route
+            path="notifications"
+            element={<CandidateNotifications />}
+          />
+          <Route path="settings" element={<CandidateSettings />} />
+          <Route
+            path="resume-onboarding"
+            element={<ResumeOnboarding />}
+          />
+        </Route>
 
-        {/* Admin */}
-        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/companies" element={<AdminCompanies />} />
-        <Route path="/admin/employees" element={<AdminEmployees />} />
-        <Route path="/admin/jobs" element={<AdminJobs />} />
-        <Route path="/admin/referrals" element={<AdminReferrals />} />
+        {/* Employee routes */}
+        <Route
+          path="/employee"
+          element={<ProtectedRoute allowedRoles={["employee"]} />}
+        >
+          <Route
+            index
+            element={
+              <Navigate to="/employee/dashboard" replace />
+            }
+          />
+          <Route path = "form/preview/:slug" element={<FormPreviewToEmployee/>}/>
+          {/* <Route path="dashboard" element={<EmployeeDashboard />} /> */}
+          <Route path="candidates" element={<EmployeeCandidates />} />
+          <Route
+            path="candidates/:id"
+            element={<EmployeeCandidateProfile />}
+          />
+          <Route path="referrals" element={<EmployeeReferrals />} />
+          <Route path="jobs" element={<EmployeeJobs />} />
+          <Route path="rewards" element={<EmployeeRewards />} />
+          <Route path="verify" element={<EmployeeVerify />} />
+          <Route
+            path="notifications"
+            element={<EmployeeNotifications />}
+          />
+          <Route path="settings" element={<EmployeeSettings />} />
+          <Route path="profile" element={<EmployeeProfile />} />
+          <Route path="refer-job" element={<ReferJob />} />
+          <Route
+            path="refer-job/create"
+            element={<CreateReferral />}
+          />
+          <Route
+            path="referral/forms"
+            element={<MyReferralForms />}
+          />
+          <Route
+            path="referral/form/submission"
+            element={<ReferralAnalytics />}
+          />
+        </Route>
 
-        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+        {/* Company routes */}
+        <Route
+          path="/company"
+          element={<ProtectedRoute allowedRoles={["company"]} />}
+        >
+          <Route
+            index
+            element={
+              <Navigate to="/company/dashboard" replace />
+            }
+          />
+          <Route path="dashboard" element={<CompanyDashboard />} />
+          <Route path="jobs" element={<CompanyJobs />} />
+          <Route path="jobs/create" element={<CompanyCreateJob />} />
+          <Route path="jobs/:id" element={<CompanyCreateJob />} />
+          <Route path="referrals" element={<CompanyReferrals />} />
+          <Route path="candidates" element={<CompanyCandidates />} />
+          <Route path="employees" element={<CompanyEmployees />} />
+          <Route path="analytics" element={<CompanyAnalytics />} />
+          <Route path="settings" element={<CompanySettings />} />
+        </Route>
+
+        {/* Admin routes */}
+        <Route
+          path="/admin"
+          element={<ProtectedRoute allowedRoles={["admin"]} />}
+        >
+          <Route
+            index
+            element={
+              <Navigate to="/admin/dashboard" replace />
+            }
+          />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="companies" element={<AdminCompanies />} />
+          <Route path="employees" element={<AdminEmployees />} />
+          <Route path="jobs" element={<AdminJobs />} />
+          <Route path="referrals" element={<AdminReferrals />} />
+        </Route>
+
+        {/* Unknown URLs */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

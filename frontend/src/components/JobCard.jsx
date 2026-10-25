@@ -156,6 +156,17 @@ export const JobCard = ({
                   <VerificationBadge label="Verified" />
                 )}
               </div>
+
+              <div className="flex items-center gap-1.5 text-sm text-slate-600 mt-1">
+                Created by
+                <span className="text-white">
+                  { job?.createdBy?.name || "NA"}
+                </span>
+
+                {job?.createdBy?.verificationStatus === "success" && (
+                  <VerificationBadge label="Verified" />
+                )}
+              </div>
             </div>
           </div>
 

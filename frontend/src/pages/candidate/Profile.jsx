@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DashboardShell } from "../../components/layout/DashboardShell";
 import { candidateSidebar } from "./Dashboard";
-import { getCandidateProfile, updateCandidateProfile , uploadCandidateResume, addCandidateProfileItem} from "../../api/candidateApi";
+import { getCandidateProfile, updateCandidateProfile, uploadCandidateResume, addCandidateProfileItem } from "../../api/candidateApi";
 import { VerificationBadge } from "../../components/Badges";
 import {
   MapPin,
@@ -15,11 +15,12 @@ import {
   Plus,
   Download,
   Upload,
-  Loader2 
+  Loader2
 } from "lucide-react";
 
 import EditProfile from "./ProfilePages/EditProfile";
 import AddProfile from "./ProfilePages/AddProfile";
+import ProfilePhotoUpload from "../../components/ProfilePhotoUpload"
 
 /* ---------------------------------------------------------
    HELPERS
@@ -90,7 +91,7 @@ export const CandidateProfile = () => {
     const fetchProfile = async () => {
       try {
         console.log(user)
-        const response = await getCandidateProfile(localUser?.id,"private");
+        const response = await getCandidateProfile(localUser?.id, "private");
         console.log(response)
         if (response.success) {
           setProfile(response.profile);
@@ -146,7 +147,7 @@ export const CandidateProfile = () => {
      ADD ITEM
   ----------------------------------------- */
 
-const handleAdd = async (type, data) => {
+  const handleAdd = async (type, data) => {
     const response = await addCandidateProfileItem(localUser?.id, type, data);
 
     if (response.success) {
@@ -155,7 +156,7 @@ const handleAdd = async (type, data) => {
       console.error("Failed to add item:", response.error);
     }
     setAddModal(null);
-};
+  };
   const handleDelete = (key, id) => {
     setProfile((prev) => ({
       ...prev,
@@ -209,17 +210,10 @@ const handleAdd = async (type, data) => {
       {/* HEADER */}
       <div className="card p-6">
         <div className="flex items-start gap-5 flex-col sm:flex-row">
-          {user?.photo ? (
-            <img
-              src={user.photo}
-              alt={user.name}
-              className="w-24 h-24 rounded-full object-cover border border-slate-200"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-3xl font-semibold shrink-0">
-              {user?.name?.charAt(0).toUpperCase() || "?"}
-            </div>
-          )}
+          <ProfilePhotoUpload
+            user={user}
+            setUser={setUser}
+          />
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center flex-wrap gap-2">
@@ -269,7 +263,7 @@ const handleAdd = async (type, data) => {
 
           <div className="flex gap-2 shrink-0">
             <button className="btn-secondary text-xs"
-            onClick={() => {window.open(`/candidate/profile/${localUser?.id}/public`, "_blank")}}
+              onClick={() => { window.open(`/candidate/profile/${localUser?.id}/public`, "_blank") }}
             >Preview</button>
             <button
               className="btn-primary text-xs"
@@ -481,7 +475,7 @@ const handleAdd = async (type, data) => {
                   <span className="text-xs text-slate-400">Not verified</span>
                 )}
               </li>
-              <li className="flex items-center justify-between">
+              {/* <li className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-2 text-slate-600">
                   <Phone className="w-3.5 h-3.5" /> Phone
                 </span>
@@ -490,7 +484,7 @@ const handleAdd = async (type, data) => {
                 ) : (
                   <span className="text-xs text-slate-400">Not verified</span>
                 )}
-              </li>
+              </li> */}
               <li className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-2 text-slate-600">
                   <FileText className="w-3.5 h-3.5" /> Resume
@@ -548,7 +542,7 @@ const handleAdd = async (type, data) => {
               <div className="space-y-1">
                 {profile.github && (
                   <a
-                    href={profile.github}
+                    href={`https://${profile.github}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 py-1"
@@ -558,7 +552,7 @@ const handleAdd = async (type, data) => {
                 )}
                 {profile.linkedin && (
                   <a
-                    href={profile.linkedin}
+                    href={`https://${profile.linkedin}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 py-1"
@@ -568,7 +562,7 @@ const handleAdd = async (type, data) => {
                 )}
                 {profile.portfolio && (
                   <a
-                    href={profile.portfolio}
+                    href={`https://profile.portfolio}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 py-1"

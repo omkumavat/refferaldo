@@ -360,7 +360,7 @@ export const CandidateJobs = () => {
                     applied={form.hasApplied}
                     matchScore={form.matchScore}
                     ctaLabel="Apply Now"
-                    ctaTo={`/apply/${form.slug}`}
+                    ctaTo={`/candidate/apply/${form.slug}`}
                   />
 
                   {form.applicationDeadline && (

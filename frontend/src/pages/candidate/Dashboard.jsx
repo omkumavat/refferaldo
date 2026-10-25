@@ -11,14 +11,14 @@ import { getCompanyById } from "../../data/companies";
 import { StatusBadge } from "../../components/Badges";
 
 const sidebar = [
-  { to: "/candidate/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
+  // { to: "/candidate/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/candidate/jobs", label: "Find Jobs", icon: Briefcase },
-  { to: "/candidate/applications", label: "Applications", icon: FileText },
-  { to: "/candidate/referrals", label: "Referrals", icon: Send },
-  { to: "/candidate/saved", label: "Saved Jobs", icon: Bookmark },
+  { to: "/candidate/applications", label: "My Applications", icon: FileText },
+  // { to: "/candidate/referrals", label: "Referrals", icon: Send },
+  // { to: "/candidate/saved", label: "Saved Jobs", icon: Bookmark },
   { to: "/candidate/profile/", label: "Profile", icon: User ,requiresId: true},
-  { to: "/candidate/notifications", label: "Notifications", icon: Bell },
-  { to: "/candidate/settings", label: "Settings", icon: Settings },
+  // { to: "/candidate/notifications", label: "Notifications", icon: Bell },
+  // { to: "/candidate/settings", label: "Settings", icon: Settings },
 ];
 
 export const candidateSidebar = sidebar;

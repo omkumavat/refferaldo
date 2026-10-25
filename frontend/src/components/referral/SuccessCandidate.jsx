@@ -45,7 +45,7 @@ export const SuccessCandidate = ({ successCandidate, setSuccessCandidate, setSho
                       </p>
                     </div>
         
-                    <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
+                    <div className="mt-6 rounded-2xl border border-blue-100 p-4">
                       <div className="flex gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600 shadow-sm">
                           <UserCheck size={18} />

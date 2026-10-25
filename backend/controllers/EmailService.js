@@ -97,3 +97,66 @@ export const sendVerificationEmail = async (email, token) => {
         html: htmlContent
     });
 };
+
+export const sendDirectReferralEmail = async (email,name,title, companyName,  empName) => {
+
+    const templatePath = path.join(__dirname, "../views", 'directReferralNotification.hbs');
+    const templateSource = fs.readFileSync(templatePath, "utf-8");
+    const template = Handlebars.compile(templateSource);
+    let htmlContent = template({  candidateName:name,
+            jobTitle:title,
+            companyName: companyName,
+            employeeName: empName,
+            referralUrl: "http://localhost:5173/candidate/applications", });
+
+    await transporter.sendMail({
+        from: `Refferal.do Admin <${process.env.MAIL_USER}`,
+        to: email,
+        subject: 'Congratulations! You were referred directly',
+        html: htmlContent
+    });
+};
+
+export const sendReferralStatusEmail = async (email,submission, statusInfo) => {
+
+    if (statusInfo) {
+        const replaceVariables = (text) =>
+            text.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+                const values = {
+                    candidateName: submission.name,
+                    jobTitle:  submission.form?.title,
+                    companyName:
+                        submission.form?.company?.companyname ||
+                        submission.form?.company?.name,
+                    employeeName:
+                        submission.form?.createdBy?.name || "The referring employee"
+                };
+
+                return values[key] ?? "";
+            });
+
+        const emailData = {
+            emailHeading: statusInfo.emailHeading,
+            statusLabel: statusInfo.statusLabel,
+            emailMessage: replaceVariables(statusInfo.emailMessage),
+            encouragementMessage: statusInfo.encouragementMessage
+        };
+
+        const templatePath = path.join(__dirname, "../views", 'referralStatusUpdate.hbs');
+        const templateSource = fs.readFileSync(templatePath, "utf-8");
+        const template = Handlebars.compile(templateSource);
+        let htmlContent = template({ candidateName:submission.name,
+            jobTitle:submission.form.title,
+            companyName: submission.form.company.name,
+            employeeName: submission.form.createdBy.name,
+            dashboardUrl: "http://localhost:5173/candidate/applications",
+             emailData });
+
+        await transporter.sendMail({
+            from: `Refferal.do Admin <${process.env.MAIL_USER}`,
+            to: email,
+            subject: 'Update on your Referral Status',
+            html: htmlContent
+        });
+    };
+}

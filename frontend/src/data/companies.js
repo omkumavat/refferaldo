@@ -40,7 +40,7 @@ export const companies = [
     id: "google",
     name: "Google",
     symbol: "/images/google_home.png",
-    tint: "bg-violet-50 text-violet-700 border-violet-200",
+    tint: "bg-slate-50 text-slate-700 border-slate-200",
     website: "linear.app",
     industry: "SaaS · Project Management",
     hq: "Remote (Global)",

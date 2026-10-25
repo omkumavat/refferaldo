@@ -17,14 +17,15 @@ export const FormPreview = ({
   submitting = false,
 }) => {
   const isApplyMode = mode === "apply";
+  console.log(job)
 
   const experience = () => {
     const min = job.experienceMin;
     const max = job.experienceMax;
 
-    if (min == null && max == null) return null;
-    if (min != null && max != null) return `${min}–${max} years`;
-    if (min != null) return `${min}+ years`;
+    if (!min && !max) return null;
+    if (!min && max) return `${min}–${max} years`;
+    if (min) return `${min}+ years`;
 
     return `Up to ${max} years`;
   };
@@ -33,14 +34,14 @@ export const FormPreview = ({
     const min = job.salaryMin;
     const max = job.salaryMax;
 
-    if (min == null && max == null) return null;
+    if (!min && !max) return null;
 
     const format = (value) =>
       Number(value).toLocaleString("en-IN");
 
-    if (min != null && max != null)
+    if (min && max)
       return `₹${format(min)} – ₹${format(max)}`;
-    if (min != null) return `₹${format(min)}+`;
+    if (min) return `₹${format(min)}+`;
 
     return `Up to ₹${format(max)}`;
   };
@@ -78,10 +79,11 @@ export const FormPreview = ({
             </h2>
 
             <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-500">
-              {job.description || "Job description"}
+              {job.description || ""}
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
+
               {job.location && (
                 <span className="preview-chip">
                   <MapPin className="h-3 w-3" />
@@ -89,10 +91,24 @@ export const FormPreview = ({
                 </span>
               )}
 
+              {job.department && (
+                <span className="preview-chip">
+                  <BriefcaseBusiness className="h-3 w-3" />
+                  {job.department}
+                </span>
+              )}
+
               {job.workMode && (
                 <span className="preview-chip">
                   <BriefcaseBusiness className="h-3 w-3" />
                   {job.workMode}
+                </span>
+              )}
+
+              {job.employmentType && (
+                <span className="preview-chip">
+                  <BriefcaseBusiness className="h-3 w-3" />
+                  {job.employmentType}
                 </span>
               )}
 
@@ -109,10 +125,26 @@ export const FormPreview = ({
                   {salary()}
                 </span>
               )}
+
+              {job.applicationDeadline && (
+                <span className="preview-chip">
+                  <Clock3 className="h-3 w-3" />
+                  Deadline:&nbsp;
+                  {new Date(job?.applicationDeadline).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  })}
+                </span>
+              )}
             </div>
 
             {job.skills?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-1.5">
+                {/* <span className="preview-chip">
+                Skills required: 
+                </span> */}
                 {job.skills.map((skill, index) => (
                   <span
                     key={`${skill}-${index}`}
@@ -156,16 +188,16 @@ export const FormPreview = ({
               ))}
             </div>
 
-            {isApplyMode && (
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={onSubmit}
-                className="mt-6 w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {submitting ? "Submitting..." : "Submit application"}
-              </button>
-            )}
+            {/* {isApplyMode && ( */}
+            <button
+              type="button"
+              disabled={submitting || !isApplyMode}
+              onClick={onSubmit}
+              className="mt-6 w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? "Submitting..." : "Submit application"}
+            </button>
+            {/* )} */}
 
             <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
               <CheckCircle2 className="h-3 w-3" />

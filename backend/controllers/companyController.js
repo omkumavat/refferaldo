@@ -5,6 +5,8 @@ import Notification from '../models/Notification.js'
 import { ok, fail, pick } from '../utils/api.js'
 import { getPagination, meta } from '../utils/pagination.js'
 import { fetchJobsForSources } from "../utils/jobsFetcher.js";
+import ReferralForm from "../models/Referral.js"
+
 
 export const create = async (req, res) => {
     if (req.user.role !== 'company' && req.user.role !== 'admin') return fail(res, 'Only company users or admins can create companies', 403);
@@ -158,4 +160,90 @@ export const jobs = async (req, res) => {
         data,
         pagination: meta(page, limit, total)
     });
+};
+
+
+export const getPublicCompanies = async (req, res) => {
+  try {
+    const {
+      search = "",
+      industry = "",
+      page = "1",
+      limit = "12",
+    } = req.query;
+
+    const pageNumber = Math.max(1, Number.parseInt(page, 10) || 1);
+    const pageSize = Math.min(
+      48,
+      Math.max(1, Number.parseInt(limit, 10) || 12)
+    );
+
+    const filter = {
+      
+    }
+
+    if (search.trim()) {
+      const escapedSearch = search.trim().replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
+
+      filter.$or = [
+        { name: { $regex: escapedSearch, $options: "i" } },
+        { industry: { $regex: escapedSearch, $options: "i" } },
+        { headquarters: { $regex: escapedSearch, $options: "i" } },
+        { description: { $regex: escapedSearch, $options: "i" } },
+      ];
+    }
+
+    if (industry.trim()) {
+      filter.industry = industry.trim();
+    }
+
+    const [companies, total] = await Promise.all([
+      Company.find()
+        .sort({ name: 1 })
+        .skip((pageNumber - 1) * pageSize)
+        .limit(pageSize)
+        .lean(),
+
+      Company.countDocuments(),
+    ]);
+
+    
+    const enrichedCompanies = await Promise.all(
+      companies.map(async (company) => {
+        const [openJobs] = await Promise.all([
+          ReferralForm.countDocuments({
+            company: company._id,
+            status: "active",
+          }),
+        ]);
+
+        return {
+          ...company,
+          openJobs,
+          referrers:company.employeeAssociated
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      companies: enrichedCompanies,
+      pagination: {
+        total,
+        page: pageNumber,
+        limit: pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Get public companies error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to load companies at this time.",
+    });
+  }
 };

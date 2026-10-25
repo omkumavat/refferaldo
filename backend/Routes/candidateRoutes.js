@@ -4,7 +4,8 @@ const router = express.Router();
 import {authMiddleware} from '../middleware/authMiddleware.js';
 import {requireRole} from '../middleware/roleMiddleware.js';
 import {uploadResume} from '../middleware/uploadMiddleware.js';
-import {getProfile, updateProfile, resume, addCandidateProfile, parseResume} from '../controllers/candidateController.js';
+import uploadImage from "../middleware/uploadImage.js"
+import {getProfile, updateProfile, resume, addCandidateProfile, parseResume, getMyReferralSubmissions, uploadProfilePhoto} from '../controllers/candidateController.js';
 // import m from '../controllers/matchController.js';
 
 import {body,param} from 'express-validator';
@@ -23,7 +24,8 @@ router.put('/profile/update', authMiddleware, requireRole('candidate'), [body('e
 router.post('/profile/resume/:id', authMiddleware, requireRole('candidate'), uploadResume.single('resume'), resume);
 router.post('/profile/add/:userId/:section', authMiddleware, requireRole("candidate"), addCandidateProfile)
 router.post('/profile/resume/parse/:id', authMiddleware, requireRole('candidate'), uploadResume.single('resume'), parseResume)
-// router.get('/applications', auth, role('candidate'), c.applications);
+router.get('/referrals/submissions/:userId', authMiddleware, requireRole('candidate'), getMyReferralSubmissions);
+router.patch('/upload/profile-photo/:userId', authMiddleware, requireRole('candidate'), uploadImage.single('photo'), uploadProfilePhoto)
 // router.get('/referrals', auth, role('candidate'), c.referrals);
 // router.post('/jobs/:jobId/apply', auth, role('candidate'), param('jobId').isMongoId(), v, c.apply);
 // router.post('/jobs/:jobId/referral-request', auth, role('candidate'), [param('jobId').isMongoId(), body('employeeId').isMongoId(), body('message').optional().isLength({

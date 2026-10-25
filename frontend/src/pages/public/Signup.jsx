@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthShell } from "./Login";
 import { User, Users, CheckCircle2, Sparkles } from "lucide-react";
 import { Thankyou } from "../../components/Thankyou";
@@ -38,7 +38,9 @@ const personalEmailProviders = [
 
 export const Signup = () => {
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const returnUrl = params.get("returnUrl");
   const [role, setRole] = useState("candidate");
   const [submitSuccess, setsubmitSuccess] = useState(false);
 
@@ -84,7 +86,6 @@ export const Signup = () => {
 
   const validate = () => {
     const newErrors = {};
-
     const firstName = formData.firstName.trim();
     const lastName = formData.lastName.trim();
     const companyName = formData.firstName.trim();
@@ -261,7 +262,7 @@ export const Signup = () => {
         <>
           Already have an account?{" "}
           <Link
-            to="/login"
+            to={`/signup?returnUrl=${encodeURIComponent(returnUrl)}`}
             className="font-semibold text-emerald-700"
           >
             Log in

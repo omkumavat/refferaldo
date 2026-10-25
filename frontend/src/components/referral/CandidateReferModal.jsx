@@ -37,17 +37,20 @@ export const CandidateReferModal = ({
   const [localUser] = useState(
     JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "{}")
   );
+  
 
   useEffect(() => {
     let cancelled = false;
 
     const loadForms = async () => {
       try {
-        const result = await getAvailableReferralForms(localUser.id, candidate._id);
+        const result = await getAvailableReferralForms(localUser.id, candidate.id);
         console.log(result);
 
         if (!cancelled) {
           setForms(result.data.forms || []);
+          console.log(result.data.submissions);
+          
           setSubmissions(result.data.submissions || []);
         }
       } catch (err) {
@@ -63,29 +66,6 @@ export const CandidateReferModal = ({
       cancelled = true;
     };
   }, []);
-
-  // const handleRefer = async (form) => {
-  //   setBusyFormId(form._id);
-  //   setError("");
-  //   setSuccess("");
-
-  //   try {
-  //     const result = await referCandidateToForm(
-  //       form._id,
-  //       candidate.id
-  //     );
-
-  //     setSuccess(
-  //       result.message || `Candidate referred to ${form.title}.`
-  //     );
-
-  //     onSuccess?.();
-  //   } catch (err) {
-  //     setError(err.message || "Unable to refer candidate.");
-  //   } finally {
-  //     setBusyFormId(null);
-  //   }
-  // };
 
   return (
     <div
