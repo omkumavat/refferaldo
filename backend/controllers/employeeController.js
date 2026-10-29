@@ -192,3 +192,85 @@ export const rewards = async (req, res) => {
     }]);
     return ok(res, data);
 };
+
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { designation, department, employmentStatus } = req.body;
+
+    // Validate required fields
+    if (
+      typeof designation !== "string" ||
+      typeof department !== "string" ||
+      !designation.trim() ||
+      !department.trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Designation and department are required.",
+      });
+    }
+
+    if (
+      designation.trim().length > 100 ||
+      department.trim().length > 100
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Designation and department must not exceed 100 characters.",
+      });
+    }
+
+    if (!["active", "inactive"].includes(employmentStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid employment status.",
+      });
+    }
+
+    // The authenticated user's ID comes from authMiddleware.
+    const empId = req.params?.id
+
+    if (!empId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required.",
+      });
+    }
+
+    const employee = await Employee.findById(empId);
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee profile not found.",
+      });
+    }
+
+    // Explicitly update only editable fields.
+    employee.designation = designation.trim();
+    employee.department = department.trim();
+    employee.employmentStatus = employmentStatus;
+
+    // Never accept verificationStatus from the client.
+    await employee.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully.",
+      profile: {
+        designation: employee.designation,
+        department: employee.department,
+        employmentStatus: employee.employmentStatus,
+        verificationStatus: employee.verificationStatus,
+      },
+    });
+  } catch (error) {
+    console.error("Update employee profile error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to update your profile. Please try again.",
+    });
+  }
+};

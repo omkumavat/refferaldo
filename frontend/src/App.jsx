@@ -23,6 +23,7 @@ import { EmailVerification } from "./pages/public/EmailVerification";
 import ResumeOnboarding from './components/ResumeOnboarding'
 import {Contact} from "./pages/public/Contact"
 import {PublicJobs} from "./pages/public/PublicJobs"
+import {ResetPassword} from "./pages/public/ResetPassword"
 
 // Candidate
 import { CandidateDashboard } from "./pages/candidate/Dashboard";
@@ -102,10 +103,10 @@ function getStoredUser() {
 }
 
 // Send each role to its own dashboard.
-function getDashboardPath(role) {
+function getDashboardPath(role, id) {
   const dashboards = {
-    candidate: "/candidate/dashboard",
-    employee: "/employee/dashboard",
+    candidate: `/candidate/profile`,
+    employee: "/employee/profile",
     company: "/company/dashboard",
     admin: "/admin/dashboard",
   };
@@ -140,7 +141,7 @@ function ProtectedRoute({ allowedRoles }) {
   ) {
     return (
       <Navigate
-        to={getDashboardPath(user.role)}
+        to={getDashboardPath(user.role, user.id)}
         replace
       />
     );
@@ -198,6 +199,7 @@ function App() {
           path="/forgot-password"
           element={<ForgotPassword />}
         />
+        <Route path="/reset-password" element={<ResetPassword/>}/>
         <Route path="/verify" element={<EmailVerification />} />
 
 

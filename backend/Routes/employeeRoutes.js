@@ -4,7 +4,7 @@ const router = express.Router();
 import {authMiddleware} from '../middleware/authMiddleware.js';
 import {requireRole} from '../middleware/roleMiddleware.js';
 import verify from '../middleware/employeeVerificationMiddleware.js';
-import {getEmployee} from '../controllers/employeeController.js';
+import {getEmployee, updateProfile} from '../controllers/employeeController.js';
 
 import {body,param} from 'express-validator';
 import v from '../middleware/validationMiddleware.js';
@@ -12,6 +12,7 @@ import v from '../middleware/validationMiddleware.js';
 // router.use(authMiddleware, requireRole("employee"), verify);
 // router.get('/dashboard', c.dashboard);
 router.get('/profile/:id', authMiddleware, requireRole("employee"), getEmployee)
+router.put("/profile/:id",authMiddleware, requireRole("employee"), updateProfile)
 // router.get('/jobs', c.jobs);
 // router.get('/referral-requests', c.requests);
 // router.get('/referral-requests/:id', [param('id').isMongoId()], v, c.request);

@@ -48,6 +48,9 @@ app.use('/api/referrals', referralFormRoutes);
 import referralSubmissionRoutes from "./Routes/referralSubmissionRoutes.js";
 app.use('/api/referrals/submit', referralSubmissionRoutes)
 
+import publicRoutes from "./Routes/publicRoute.js"
+app.use("/api/public", publicRoutes)
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '..', 'src', 'public')));

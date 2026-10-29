@@ -51,11 +51,13 @@ const schema = new mongoose.Schema({
     },
     passwordResetTokenHash: {
         type: String,
-        select: false
+        select: false,
+        default:undefined
     },
     passwordResetExpires: {
         type: Date,
-        select: false
+        select: false,
+        default:undefined
     },
     candidateProfile: {
         type: mongoose.Schema.Types.ObjectId,

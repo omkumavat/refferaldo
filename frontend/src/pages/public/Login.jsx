@@ -102,7 +102,9 @@ export const Login = () => {
     rememberMe: false,
   });
 
-  const showResumeParse = location.state?.showResumeParse;
+  const showResumeParse = params.get("resumeParse") === "yes";
+  // console.log(showResumeParse);
+  
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -253,23 +255,29 @@ export const Login = () => {
         );
       }
 
-      console.log("returnUrl:", returnUrl);
+      console.log("returnUrl:", returnUrl, showResumeParse);
 
-      if (returnUrl && returnUrl != null && returnUrl.trim() !== "") {
-        navigate(returnUrl, { replace: true });
+      if (returnUrl && returnUrl !== "null" && returnUrl.trim() !== "") {
+        console.log("hi1");
+         navigate(returnUrl, { replace: true });
+         
         return;
       }
 
       if (user.role === "candidate" && showResumeParse) {
+        console.log("hi1");
         navigate("/candidate/resume-onboarding", {
           replace: true,
         });
+        
       } else {
         if (user.role === "candidate") {
-          navigate(`/candidate/profile/user._id/private`, {
+          console.log("hi1");
+          navigate(`/candidate/profile/${user._id}/private`, {
             replace: true,
           });
         } else if (user.role === "employee") {
+          console.log("hi1");
           navigate(`/employee/profile`, {
             replace: true,
           });

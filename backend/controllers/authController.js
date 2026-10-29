@@ -16,7 +16,7 @@ const cookieOpts = () => ({
 });
 
 const personalEmailProviders = [
-    // 'gmail.com',
+    'gmail.com',
     'yahoo.com',
     'hotmail.com',
     'outlook.com',
@@ -289,12 +289,12 @@ export const forgotPassword = async (req, res) => {
 
         const resetToken = crypto.randomBytes(32).toString("hex");
 
-        user.resetPasswordToken = crypto
+        user.passwordResetTokenHash = crypto
             .createHash("sha256")
             .update(resetToken)
             .digest("hex");
 
-        user.resetPasswordExpires = new Date(
+        user.passwordResetExpires = new Date(
             Date.now() + 15 * 60 * 1000
         );
 
@@ -305,8 +305,8 @@ export const forgotPassword = async (req, res) => {
             await resetPasswordEmail(email, resetToken, returnUrl, user?.name);
         } catch (emailError) {
             // Do not leave an unusable token active if email delivery fails.
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpires = undefined;
+            user.passwordResetTokenHash = undefined;
+            user.passwordResetExpires = undefined;
             await user.save({ validateBeforeSave: false });
             throw emailError;
         }
@@ -328,9 +328,9 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     try {
         const { token } = req.params;
-        const { password, confirmPassword } = req.body;
+        const { password, confirmPassword, email } = req.body;
 
-        if (!token || !password || !confirmPassword) {
+        if (!token || !password || !confirmPassword || !email) {
             return res.status(400).json({
                 success: false,
                 message: "Token, password and confirmation are required",
@@ -358,10 +358,11 @@ export const resetPassword = async (req, res) => {
             .digest("hex");
 
         const user = await User.findOne({
-            resetPasswordToken: hashedToken,
-            resetPasswordExpires: { $gt: new Date() },
+            passwordResetTokenHash: hashedToken,
+            passwordResetExpires: { $gt: new Date() },
             isActive: true,
             isEmailVerified: true,
+            email:email
         }).select("+password");
 
         if (!user) {
@@ -373,8 +374,8 @@ export const resetPassword = async (req, res) => {
 
         // Ensure your User pre-save hook hashes passwords.
         user.password = password;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
+        user.passwordResetTokenHash = undefined;
+        user.passwordResetExpires = undefined;
 
         await user.save();
 

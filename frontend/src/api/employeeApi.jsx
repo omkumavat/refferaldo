@@ -51,7 +51,7 @@ export const updateEmployeeProfile = async (profileId, data) => {
             return { success: false, error: result.message || "Failed to update profile" };
         }
 
-        return { success: true, profile: result.data.profile, user: result.data.user, company: result.data.company };
+        return { success: true, profile: result.profile };
     } catch (error) {
         console.error("Error updating employee profile:", error);
         return { success: false, error: error.message || "Failed to update profile" };

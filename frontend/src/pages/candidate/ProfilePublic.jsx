@@ -145,9 +145,9 @@ export const CandidateProfilePublic = () => {
     };
 
 
-    const hasLinks = profile.github || profile.linkedin || profile.portfolio;
+    const hasLinks = profile?.github || profile?.linkedin || profile?.portfolio;
     const companyName =
-        profile.currentCompany && typeof profile.currentCompany === "object"
+        profile?.currentCompany && typeof profile.currentCompany === "object"
             ? profile.currentCompany.name
             : null;
 
@@ -174,10 +174,10 @@ export const CandidateProfilePublic = () => {
                             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                                 {user?.name || "Unnamed Candidate"}
                             </h1>
-                            {profile.verificationStatus === "verified" && (
+                            {profile?.verificationStatus === "verified" && (
                                 <VerificationBadge label="Identity Verified" />
                             )}
-                            {profile.verificationStatus === "pending" && (
+                            {profile?.verificationStatus === "pending" && (
                                 <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                                     Verification Pending
                                 </span>
@@ -185,7 +185,7 @@ export const CandidateProfilePublic = () => {
                         </div>
 
                         <p className="text-slate-600 mt-0.5">
-                            {profile.headline || (
+                            {profile?.headline || (
                                 <span className="text-slate-400">No headline added</span>
                             )}
                         </p>
@@ -197,7 +197,7 @@ export const CandidateProfilePublic = () => {
                                 </span>
                             )}
 
-                            {(profile.currentPosition || companyName) && (
+                            {(profile?.currentPosition || companyName) && (
                                 <span className="inline-flex items-center gap-1.5">
                                     <Briefcase className="w-3.5 h-3.5" />
                                     {[profile.currentPosition, companyName]
@@ -206,7 +206,7 @@ export const CandidateProfilePublic = () => {
                                 </span>
                             )}
 
-                            {typeof profile.experienceYears === "number" && (
+                            {typeof profile?.experienceYears === "number" && (
                                 <span className="inline-flex items-center gap-1.5">
                                     {profile.experienceYears}{" "}
                                     {profile.experienceYears === 1 ? "year" : "years"} experience
@@ -237,7 +237,7 @@ export const CandidateProfilePublic = () => {
                     {/* ABOUT */}
                     <div className="card p-6">
                         <h2 className="font-semibold text-slate-900 mb-2">About</h2>
-                        {profile.bio ? (
+                        {profile?.bio ? (
                             <p className="text-sm leading-7 text-slate-600 sm:text-base">
                                 {profile.bio}
                             </p>
@@ -253,7 +253,7 @@ export const CandidateProfilePublic = () => {
                             onAdd={() => setAddModal("experience")}
                         />
 
-                        {profile.experience?.length ? (
+                        {profile?.experience?.length ? (
                             <div className="space-y-4">
                                 {profile.experience.map((e) => (
                                     <div key={e._id ?? e.id} className="flex gap-3">
@@ -294,7 +294,7 @@ export const CandidateProfilePublic = () => {
                             onAdd={() => setAddModal("education")}
                         />
 
-                        {profile.education?.length ? (
+                        {profile?.education?.length ? (
                             <div className="space-y-4">
                                 {profile.education.map((ed) => (
                                     <div key={ed._id ?? ed.id} className="flex gap-3">
@@ -324,7 +324,7 @@ export const CandidateProfilePublic = () => {
                             onAdd={() => setAddModal("project")}
                         />
 
-                        {profile.projects?.length ? (
+                        {profile?.projects?.length ? (
                             <div>
                                 {profile.projects.map((p) => (
                                     <div
@@ -373,7 +373,7 @@ export const CandidateProfilePublic = () => {
                             onAdd={() => setAddModal("achievement")}
                         />
 
-                        {profile.achievements?.length ? (
+                        {profile?.achievements?.length ? (
                             <div className="space-y-4">
                                 {profile.achievements.map((a) => (
                                     <div key={a._id ?? a.id} className="flex gap-3">
@@ -402,7 +402,7 @@ export const CandidateProfilePublic = () => {
                     {/* SKILLS */}
                     <div className="card p-6">
                         <h2 className="font-semibold text-slate-900 mb-3">Skills</h2>
-                        {profile.skills?.length ? (
+                        {profile?.skills?.length ? (
                             <div className="flex flex-wrap gap-2">
                                 {profile.skills.map((s) => (
                                     <span key={s} className="chip-emerald">
@@ -445,7 +445,7 @@ export const CandidateProfilePublic = () => {
                                 <span className="inline-flex items-center gap-2 text-slate-600">
                                     <FileText className="w-3.5 h-3.5" /> Resume
                                 </span>
-                                {profile.resumeUrl ? (
+                                {profile?.resumeUrl ? (
                                     <VerificationBadge label="Uploaded" />
                                 ) : (
                                     <span className="text-xs text-slate-400">Not uploaded</span>
@@ -461,7 +461,7 @@ export const CandidateProfilePublic = () => {
                             onAdd={() => setAddModal("certification")}
                         />
 
-                        {profile.certifications?.length ? (
+                        {profile?.certifications?.length ? (
                             <div className="space-y-3">
                                 {profile.certifications.map((c) => (
                                     <div key={c._id ?? c.id}>
@@ -535,7 +535,7 @@ export const CandidateProfilePublic = () => {
                     {/* RESUME */}
                     <div className="card p-6 border-emerald-200 bg-emerald-50/40">
                         <h3 className="font-semibold text-slate-900">Resume</h3>
-                        {profile.resumeUrl ? (
+                        {profile?.resumeUrl ? (
                             <>
                                 {/* <p className="text-xs text-slate-600 mt-1 truncate">
                   {profile.resumeUrl.split("/").pop()}

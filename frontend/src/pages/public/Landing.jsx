@@ -131,7 +131,7 @@ export const Landing = () => {
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
-                to="/jobs"
+                to="/public/jobs"
                 className="group inline-flex items-center justify-center gap-3 rounded-xl bg-emerald-400 px-6 py-4 text-sm font-semibold text-[#07120D] transition-all duration-300"
                 data-testid="hero-find-job"
               >

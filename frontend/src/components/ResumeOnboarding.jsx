@@ -134,7 +134,7 @@ const ResumeOnboarding = () => {
                     <div className="grid lg:grid-cols-2">
 
                         {/* Benefits */}
-                        <div className="p-6 sm:p-10 bg-slate-50/70">
+                        <div className="p-6 sm:p-10">
                             <h2 className="text-lg font-semibold text-slate-900">
                                 Why upload your resume?
                             </h2>

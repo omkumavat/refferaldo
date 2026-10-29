@@ -61,9 +61,8 @@ export const EmployeeProfile = () => {
     try {
       setSaving(true);
       const response = await updateEmployeeProfile(profile._id, profile);
-
-      if (response.success) {
-        setProfile(response.data);
+      if (response) {
+        setProfile(response.profile);
         setEditing(false);
       }
     } catch (error) {
