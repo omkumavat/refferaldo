@@ -150,21 +150,12 @@ export const Signup = () => {
     }
 
     // Password
-    // if (!password) {
-    //   newErrors.password = "Password is required";
-    // } else if (password.length < 8) {
-    //   newErrors.password =
-    //     "Password must be at least 8 characters";
-    // } else if (!/[A-Z]/.test(password)) {
-    //   newErrors.password =
-    //     "Password must contain at least one uppercase letter";
-    // } else if (!/[a-z]/.test(password)) {
-    //   newErrors.password =
-    //     "Password must contain at least one lowercase letter";
-    // } else if (!/[0-9]/.test(password)) {
-    //   newErrors.password =
-    //     "Password must contain at least one number";
-    // }
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password =
+        "Password must be at least 8 characters";
+    } 
 
     // Confirm password
     if (!confirmPassword) {
@@ -201,6 +192,7 @@ export const Signup = () => {
         },
         credentials: "include",
         body: JSON.stringify({
+          returnUrl: returnUrl || "",
           name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
           email: formData.email.trim().toLowerCase(),
           password: formData.password,
@@ -262,7 +254,7 @@ export const Signup = () => {
         <>
           Already have an account?{" "}
           <Link
-            to={`/signup?returnUrl=${encodeURIComponent(returnUrl)}`}
+            to={`/login?returnUrl=${encodeURIComponent(returnUrl)}`}
             className="font-semibold text-emerald-700"
           >
             Log in

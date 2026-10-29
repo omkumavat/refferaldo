@@ -115,28 +115,28 @@ export const removeEmployee = async (req, res) => {
 export const getCompanyJobs = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         const profile = await Employee.findOne({
             user: id
         }).populate('company');
-        
+
         if (profile.company.verificationStatus === 'pending') {
-            return ok(res, {verified:false, jobs:[], company: profile.company}, 'Employee added for verification', 201);
+            return ok(res, { verified: false, jobs: [], company: profile.company }, 'Employee added for verification', 201);
         }
 
         const data = {
             companyname: profile.company.name,
-            sources:profile.company.sources
+            sources: profile.company.sources
         }
         const result = await fetchJobsForSources(data);
 
         res.status(200).json({
-            verified:true,
+            verified: true,
             success: true,
             jobs: result,
 
         });
-        return ok(res, {verified:true, jobs: result, company: profile.company}, 'Employee added for verification', 201);
+        return ok(res, { verified: true, jobs: result, company: profile.company }, 'Employee added for verification', 201);
     } catch (error) {
         console.error("Failed to fetch company jobs:", error);
         res.status(500).json({ success: false, message: "Failed to fetch jobs" });
@@ -164,86 +164,86 @@ export const jobs = async (req, res) => {
 
 
 export const getPublicCompanies = async (req, res) => {
-  try {
-    const {
-      search = "",
-      industry = "",
-      page = "1",
-      limit = "12",
-    } = req.query;
+    try {
+        const {
+            search = "",
+            industry = "",
+            page = "1",
+            limit = "12",
+        } = req.query;
 
-    const pageNumber = Math.max(1, Number.parseInt(page, 10) || 1);
-    const pageSize = Math.min(
-      48,
-      Math.max(1, Number.parseInt(limit, 10) || 12)
-    );
+        const pageNumber = Math.max(1, Number.parseInt(page, 10) || 1);
+        const pageSize = Math.min(
+            48,
+            Math.max(1, Number.parseInt(limit, 10) || 12)
+        );
 
-    const filter = {
-      
-    }
+        const filter = {
 
-    if (search.trim()) {
-      const escapedSearch = search.trim().replace(
-        /[.*+?^${}()|[\]\\]/g,
-        "\\$&"
-      );
+        }
 
-      filter.$or = [
-        { name: { $regex: escapedSearch, $options: "i" } },
-        { industry: { $regex: escapedSearch, $options: "i" } },
-        { headquarters: { $regex: escapedSearch, $options: "i" } },
-        { description: { $regex: escapedSearch, $options: "i" } },
-      ];
-    }
+        if (search.trim()) {
+            const escapedSearch = search.trim().replace(
+                /[.*+?^${}()|[\]\\]/g,
+                "\\$&"
+            );
 
-    if (industry.trim()) {
-      filter.industry = industry.trim();
-    }
+            filter.$or = [
+                { name: { $regex: escapedSearch, $options: "i" } },
+                { industry: { $regex: escapedSearch, $options: "i" } },
+                { headquarters: { $regex: escapedSearch, $options: "i" } },
+                { description: { $regex: escapedSearch, $options: "i" } },
+            ];
+        }
 
-    const [companies, total] = await Promise.all([
-      Company.find()
-        .sort({ name: 1 })
-        .skip((pageNumber - 1) * pageSize)
-        .limit(pageSize)
-        .lean(),
+        if (industry.trim()) {
+            filter.industry = industry.trim();
+        }
 
-      Company.countDocuments(),
-    ]);
+        const [companies, total] = await Promise.all([
+            Company.find()
+                .sort({ name: 1 })
+                .skip((pageNumber - 1) * pageSize)
+                .limit(pageSize)
+                .lean(),
 
-    
-    const enrichedCompanies = await Promise.all(
-      companies.map(async (company) => {
-        const [openJobs] = await Promise.all([
-          ReferralForm.countDocuments({
-            company: company._id,
-            status: "active",
-          }),
+            Company.countDocuments(),
         ]);
 
-        return {
-          ...company,
-          openJobs,
-          referrers:company.employeeAssociated
-        };
-      })
-    );
 
-    return res.status(200).json({
-      success: true,
-      companies: enrichedCompanies,
-      pagination: {
-        total,
-        page: pageNumber,
-        limit: pageSize,
-        totalPages: Math.ceil(total / pageSize),
-      },
-    });
-  } catch (error) {
-    console.error("Get public companies error:", error);
+        const enrichedCompanies = await Promise.all(
+            companies.map(async (company) => {
+                const [openJobs] = await Promise.all([
+                    ReferralForm.countDocuments({
+                        company: company._id,
+                        status: "active",
+                    }),
+                ]);
 
-    return res.status(500).json({
-      success: false,
-      message: "Unable to load companies at this time.",
-    });
-  }
+                return {
+                    ...company,
+                    openJobs,
+                    referrers: company.employeeAssociated
+                };
+            })
+        );
+
+        return res.status(200).json({
+            success: true,
+            companies: enrichedCompanies,
+            pagination: {
+                total,
+                page: pageNumber,
+                limit: pageSize,
+                totalPages: Math.ceil(total / pageSize),
+            },
+        });
+    } catch (error) {
+        console.error("Get public companies error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load companies at this time.",
+        });
+    }
 };

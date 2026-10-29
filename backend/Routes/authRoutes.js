@@ -15,7 +15,7 @@ router.post('/logout', logout);
 router.get('/me', authMiddleware, me);
 router.post('/verify-email', [body('token').isString().notEmpty()], v, verifyEmail);
 router.post('/forgot-password', [body('email').isEmail().normalizeEmail()], v, authLimiter, forgotPassword);
-router.post('/reset-password', [body('token').notEmpty(), body('password').isLength({
-    min: 8
+router.post('/reset-password/:token', [body('password').isLength({
+    min: 6
 })], v, resetPassword);
 export default router;

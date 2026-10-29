@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate ,useLocation} from "react-router-dom";
 import {
     MailCheck,
     CheckCircle2,
@@ -14,6 +14,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const EmailVerification = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const returnUrl = params.get("returnUrl");
 
     const token = searchParams.get("token");
 
@@ -66,7 +69,7 @@ export const EmailVerification = () => {
 
                 // Redirect to login after successful verification
                 setTimeout(() => {
-                    navigate("/login", {
+                    navigate(`/login?returnUrl=${returnUrl}`, {
                         state: {
                             message:
                                 "Email verified successfully. You can now log in.",

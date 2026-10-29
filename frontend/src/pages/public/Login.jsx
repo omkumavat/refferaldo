@@ -12,7 +12,7 @@ const dashboardByRole = {
   admin: "/admin/dashboard",
 };
 
-const AuthShell = ({ title, subtitle, children, footer }) => (
+export const AuthShell = ({ title, subtitle, children, footer }) => (
   <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
     <div className="hidden lg:block relative bg-slate-900">
       <img
@@ -180,7 +180,7 @@ export const Login = () => {
 
       const result = await response.json();
 
-      console.log("Login response:", result);
+     console.log(result)
 
       if (!response.ok || !result.success) {
         // Handle backend validation errors
@@ -255,7 +255,7 @@ export const Login = () => {
 
       console.log("returnUrl:", returnUrl);
 
-      if (returnUrl && returnUrl.trim() !== "") {
+      if (returnUrl && returnUrl != null && returnUrl.trim() !== "") {
         navigate(returnUrl, { replace: true });
         return;
       }
@@ -472,5 +472,3 @@ export const Login = () => {
     </AuthShell>
   );
 };
-
-export { AuthShell };

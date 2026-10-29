@@ -82,8 +82,8 @@ export const sendSignUpSuccessfulEmail = async (req, res) => {
 };
 
 
-export const sendVerificationEmail = async (email, token) => {
-    const verificationUrl = `http://localhost:5173/verify?token=${token}`;
+export const sendVerificationEmail = async (email, token, returnUrl) => {
+    const verificationUrl = `http://localhost:5173/verify?token=${token}?returnUrl=${returnUrl}`;
 
     const templatePath = path.join(__dirname, "../views", 'Verification.hbs');
     const templateSource = fs.readFileSync(templatePath, "utf-8");
@@ -94,6 +94,22 @@ export const sendVerificationEmail = async (email, token) => {
         from: `Refferal.do Admin <${process.env.MAIL_USER}`,
         to: email,
         subject: 'Complete Your Registration',
+        html: htmlContent
+    });
+};
+
+export const resetPasswordEmail = async (email, token, returnUrl, name) => {
+    const resetUrl = `http://localhost:5173/reset-password?token=${token}?returnUrl=${returnUrl}?email=${email}`;
+
+    const templatePath = path.join(__dirname, "../views", 'reset-password.hbs');
+    const templateSource = fs.readFileSync(templatePath, "utf-8");
+    const template = Handlebars.compile(templateSource);
+    let htmlContent = template({ resetUrl, name });
+
+    await transporter.sendMail({
+        from: `Refferal.do Admin <${process.env.MAIL_USER}`,
+        to: email,
+        subject: 'Reset Your Password',
         html: htmlContent
     });
 };
