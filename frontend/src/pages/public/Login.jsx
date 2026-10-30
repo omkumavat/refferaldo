@@ -446,13 +446,13 @@ export const Login = () => {
         </div>
 
         {/* Remember Me */}
-        <label className="flex items-center gap-2 text-sm text-slate-600 pt-2 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-white-600 pt-2 cursor-pointer">
           <input
             name="rememberMe"
             type="checkbox"
             checked={formData.rememberMe}
             onChange={handleChange}
-            className="accent-emerald-600"
+            className="accent-white-600"
           />
 
           Remember me

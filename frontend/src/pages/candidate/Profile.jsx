@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DashboardShell } from "../../components/layout/DashboardShell";
 import { candidateSidebar } from "./Dashboard";
-import { getCandidateProfile, updateCandidateProfile, uploadCandidateResume, addCandidateProfileItem } from "../../api/candidateApi";
+import { getCandidateProfile, updateCandidateProfile, uploadCandidateResume,downloadResume, addCandidateProfileItem } from "../../api/candidateApi";
 import { VerificationBadge } from "../../components/Badges";
 import {
   MapPin,
@@ -111,8 +111,7 @@ export const CandidateProfile = () => {
     try {
       setSaving(true);
 
-      const response = await updateCandidateProfile(profile);
-
+      const response = await updateCandidateProfile(profile, localUser?.id);
       if (response.success) {
         setProfile(response.data);
         setEditing(false);
@@ -143,10 +142,6 @@ export const CandidateProfile = () => {
     e.target.value = ""; // allow re-selecting the same file later
   };
 
-  /* -----------------------------------------
-     ADD ITEM
-  ----------------------------------------- */
-
   const handleAdd = async (type, data) => {
     const response = await addCandidateProfileItem(localUser?.id, type, data);
 
@@ -165,6 +160,14 @@ export const CandidateProfile = () => {
       ),
     }));
   };
+
+const handleDownloadResume = async () => {
+    try {
+        await downloadResume(localUser?.id);
+    } catch (error) {
+        console.error("Resume download failed:", error);
+    }
+};
 
   if (loading) {
     return (
@@ -585,16 +588,13 @@ export const CandidateProfile = () => {
                   {profile.resumeUrl.split("/").pop()}
                 </p> */}
                 <div className="flex gap-2 mt-3">
-                  <a
-                    href={profile.resumeUrl}
-                    // target="_blank"
-                    // rel="noreferrer"
-                    download="resume.pdf"
+                  <button
+                  onClick={handleDownloadResume}
                     className="btn-secondary flex-1 justify-center text-xs inline-flex items-center gap-1.5"
                   >
                     <Download className="w-3.5 h-3.5" />
                     Download
-                  </a>
+                  </button>
                   <button
                     type="button"
                     onClick={() => resumeInputRef.current?.click()}

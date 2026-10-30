@@ -196,7 +196,7 @@ const EditProfile = ({
   };
 
   const handleSave = () => {
-    if (saving || !validate()) return;
+    if (!validate()) return;
     onSave();
   };
 

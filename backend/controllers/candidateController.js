@@ -11,6 +11,9 @@ import Match from '../models/Match.js';
 import { extractResumeText, parseResumeWithAI } from "../utils/resumeParser.js";
 // import ai from '../services/aiService.js';
 
+import path from "path";
+import fs from "fs";
+
 import { ok, fail, pick } from '../utils/api.js';
 import { getPagination, meta } from '../utils/pagination.js';
 
@@ -64,21 +67,166 @@ export const getProfile = async (req, res) => {
     }
 }
 
-export const updateProfile = async (req, res) => {
-    const p = await Candidate.findOneAndUpdate({
-        user: req.user._id
-    }, {
-        user: req.user._id,
-        ...pick(req.body, ['headline', 'bio', 'skills', 'experienceYears', 'currentCompany', 'currentPosition', 'education', 'projects', 'certifications', 'github', 'linkedin', 'portfolio', 'profileCompletion'])
-    }, {
-        upsert: true,
-        new: true,
-        runValidators: true,
-        setDefaultsOnInsert: true
-    });
-    return ok(res, p, 'Candidate profile updated');
+
+import { body, param, validationResult } from "express-validator";
+
+export const updateProfileValidator = [
+    param("userId")
+        .custom((value) => mongoose.isValidObjectId(value))
+        .withMessage("Invalid user ID"),
+
+    body("headline")
+        .optional({ nullable: true })
+        .isString().withMessage("Headline must be a string")
+        .trim()
+        .isLength({ max: 160 }).withMessage("Headline cannot exceed 160 characters"),
+
+    body("bio")
+        .optional({ nullable: true })
+        .isString().withMessage("Bio must be a string")
+        .trim()
+        .isLength({ max: 2000 }).withMessage("Bio cannot exceed 2000 characters"),
+
+    body("skills")
+        .optional()
+        .isArray().withMessage("Skills must be an array"),
+
+    body("skills.*")
+        .optional()
+        .isString().withMessage("Each skill must be a string")
+        .trim()
+        .notEmpty().withMessage("Skill cannot be empty")
+        .isLength({ max: 50 }).withMessage("Skill cannot exceed 50 characters"),
+
+    body("experienceYears")
+        .optional()
+        .isFloat({ min: 0, max: 60 })
+        .withMessage("Experience years must be between 0 and 60")
+        .toFloat(),
+
+    body("currentCompany")
+        .optional({ nullable: true })
+        .isString().withMessage("Current company must be a string")
+        .trim()
+        .isLength({ max: 150 }),
+
+    body("currentPosition")
+        .optional({ nullable: true })
+        .isString().withMessage("Current position must be a string")
+        .trim()
+        .isLength({ max: 150 }),
+
+    ...["education", "projects", "certifications"].map((field) =>
+        body(field)
+            .optional()
+            .isArray().withMessage(`${field} must be an array`)
+            .custom((items) =>
+                items.every(
+                    (item) =>
+                        item !== null &&
+                        typeof item === "object" &&
+                        !Array.isArray(item)
+                )
+            ).withMessage(`${field} must contain valid objects`)
+    ),
+
+    body("github")
+        .optional({ nullable: true, checkFalsy: true })
+        .isURL({ require_protocol: true })
+        .withMessage("Invalid GitHub URL"),
+
+    body("linkedin")
+        .optional({ nullable: true, checkFalsy: true })
+        .isURL({ require_protocol: true })
+        .withMessage("Invalid LinkedIn URL"),
+
+    body("portfolio")
+        .optional({ nullable: true, checkFalsy: true })
+        .isURL({ require_protocol: true })
+        .withMessage("Invalid portfolio URL"),
+
+    body("profileCompletion")
+        .optional()
+        .isInt({ min: 0, max: 100 })
+        .withMessage("Profile completion must be between 0 and 100")
+        .toInt()
+];
+
+export const validateRequest = (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            success: false,
+            message: "Validation failed",
+            errors: errors.array().map((err) => ({
+                field: err.path,
+                message: err.msg
+            }))
+        });
+    }
+
+    next();
 };
+
+
+
+
+export const updateProfile = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        const allowedFields = [
+            "headline",
+            "bio",
+            "skills",
+            "experienceYears",
+            "currentCompany",
+            "currentPosition",
+            "education",
+            "experience",
+            "projects",
+            "certifications",
+            "achievements",
+            "github",
+            "linkedin",
+            "portfolio",
+            "profileCompletion"
+        ];
+
+        const updates = pick(req.body, allowedFields);
+
+        if (!Object.keys(updates).length) {
+            return res.status(400).json({
+                success: false,
+                message: "No valid profile fields provided"
+            });
+        }
+
+        const profile = await Candidate.findOneAndUpdate(
+            { user: userId },
+            {
+                $set: updates,
+                $setOnInsert: { user: userId }
+            },
+            {
+                new: true,
+                upsert: true,
+                runValidators: true,
+                setDefaultsOnInsert: true
+            }
+        );
+
+        return ok(res, profile, "Candidate profile updated successfully");
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 export const resume = async (req, res) => {
+    console.log(process.env.UPLOAD_DIR)
     if (!req.file) return fail(res, 'Resume file is required', 422);
     const p = await Candidate.findOneAndUpdate({
         user: req.params.id
@@ -116,8 +264,20 @@ export const addCandidateProfile = async (req, res) => {
 
         const profile = await Candidate.findOneAndUpdate(
             { user: userId },
-            { $push: { [section]: item } },
-            { new: true, runValidators: true }
+            {
+                $push: {
+                    [section]: item
+                },
+                $setOnInsert: {
+                    user: userId
+                }
+            },
+            {
+                new: true,
+                upsert: true,
+                runValidators: true,
+                setDefaultsOnInsert: true
+            }
         );
 
         if (!profile) {
@@ -175,6 +335,38 @@ export const parseResume = async (req, res) => {
         res.status(500).json({ success: false, message: "Failed to process resume" });
     }
 }
+
+
+export const downloadResume = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        const profile = await Candidate.findOne({ user: userId })
+            .select("resumeUrl")
+            .lean();
+
+        if (!profile?.resumeUrl) {
+            return res.status(404).json({
+                success: false,
+                message: "Resume not found"
+            });
+        }
+
+        const filePath = "http://localhost:4000" + profile.resumeUrl
+
+        // if (!fs.existsSync(filePath)) {
+        //     return res.status(404).json({
+        //         success: false,
+        //         message: "Resume file does not exist"
+        //     });
+        // }
+
+        res.json({ success: true, filePath })
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const getMyReferralSubmissions = async (req, res) => {
     try {
@@ -288,11 +480,6 @@ export const recommended = async (req, res) => {
     rec.sort((a, b) => b.score - a.score);
     return ok(res, rec.slice(0, 20));
 };
-
-
-
-import fs from "fs/promises";
-import path from "path";
 
 const profileImageDir = path.resolve("public/profile-images");
 

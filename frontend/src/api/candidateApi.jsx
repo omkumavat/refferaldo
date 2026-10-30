@@ -86,13 +86,15 @@ const dummyProfile = {
     },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const getCandidateProfile = async (userId, security) => {
     try {
         // console.log(security, userId)
-        const API_URL = `${import.meta.env.VITE_API_URL}/candidate/profile/${security}/${userId}`;
+        const API_URL2 = `${API_URL}/candidate/profile/${security}/${userId}`;
 
         const [response_profile, response_user] = await Promise.all([
-            fetch(API_URL, {
+            fetch(API_URL2, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,10 +136,9 @@ export const getCandidateProfile = async (userId, security) => {
     }
 };
 
-export const updateCandidateProfile = async (profile) => {
+export const updateCandidateProfile = async (profile, userId) => {
     try {
-        const API_URL = import.meta.env.VITE_API_URL;
-        const response = await fetch(`${API_URL}/candidate/profile/update`, {
+        const response = await fetch(`${API_URL}/candidate/profile/update/${userId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -259,4 +260,44 @@ export const parseResumeAndExtract = async (userId, file) => {
         console.error("Error parsing resume:", error);
         return { success: false, error: error.message || "Failed to parse resume" };
     }
+};
+
+export const downloadResume = async (userId) => {
+    const response = await fetch(
+        `${API_URL}/candidate/resume/download/${userId}`,
+        {
+            method: "GET",
+            credentials: "include",
+            responseType: "blob"
+        }
+
+    );
+
+    const result = await response.json();
+   if (result.success) {
+    console.log(result.filePath);
+    
+    const pdfResponse = await fetch(result.filePath,{
+        headers: {
+                "Content-Type": "application/json",
+            },
+    });
+
+    if (!pdfResponse.ok) {
+        throw new Error("Resume download failed");
+    }
+
+    const blob = await pdfResponse.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = `${userId}.pdf`;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(blobUrl);
+}
 };

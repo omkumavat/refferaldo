@@ -208,13 +208,13 @@ const verificationItems = [
       "Complete the required employee verification process before using features restricted to verified referrers.",
     badge: "Employment verification",
   },
-  {
-    role: "Companies",
-    icon: Building2,
-    description:
-      "Complete company verification and the applicable approval process before publishing company job listings.",
-    badge: "Company verification",
-  },
+  // {
+  //   role: "Companies",
+  //   icon: Building2,
+  //   description:
+  //     "Complete company verification and the applicable approval process before publishing company job listings.",
+  //   badge: "Company verification",
+  // },
 ];
 
 function SectionHeading({ eyebrow, title, description }) {
@@ -333,7 +333,7 @@ export const HowItWorks = () => (
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
-                to="/jobs"
+                to="/public/jobs"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-emerald-700"
               >
                 Explore opportunities
@@ -354,7 +354,7 @@ export const HowItWorks = () => (
           </div>
 
           {/* At-a-glance workflow */}
-          <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="mx-auto mt-14 grid max-w-5xl grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
               {
                 icon: UserRound,
@@ -366,11 +366,11 @@ export const HowItWorks = () => (
                 title: "Employees",
                 text: "Review profiles and make referrals",
               },
-              {
-                icon: Building2,
-                title: "Companies",
-                text: "Verify organizations and list jobs",
-              },
+              // {
+              //   icon: Building2,
+              //   title: "Companies",
+              //   text: "Verify organizations and list jobs",
+              // },
             ].map((item, index) => {
               const Icon = item.icon;
               return (
